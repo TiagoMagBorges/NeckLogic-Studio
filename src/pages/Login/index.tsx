@@ -14,6 +14,7 @@ export default function LoginPage() {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [keepLoggedIn, setKeepLoggedIn] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -23,7 +24,7 @@ export default function LoginPage() {
     setIsSubmitting(true);
 
     try {
-      await login(email, password);
+      await login(email, password, keepLoggedIn);
       navigate('/dashboard', { replace: true });
     } catch (err) {
       if (axios.isAxiosError(err)) {
@@ -97,6 +98,21 @@ export default function LoginPage() {
                 className="w-full bg-input-background border border-border/10 rounded-xl pl-12 pr-4 py-4 text-foreground text-[15px] focus:outline-none focus:border-primary"
               />
             </div>
+          </div>
+
+          <div className="flex items-center justify-between">
+            <label className="flex items-center gap-2 text-sm text-foreground ml-1">
+              <input
+                type="checkbox"
+                checked={keepLoggedIn}
+                onChange={(event) => setKeepLoggedIn(event.target.checked)}
+                disabled={isSubmitting}
+              />
+              {t('login.keepLoggedIn')}
+            </label>
+            <Link to="/forgot-password" className="text-sm text-primary font-medium">
+              {t('login.forgotPassword')}
+            </Link>
           </div>
 
           {error && <p className="text-destructive text-xs mt-1 ml-1">{error}</p>}

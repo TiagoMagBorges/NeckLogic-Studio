@@ -70,7 +70,9 @@ export default function DashboardPage() {
           <li key={track.id} className="bg-card border border-border/10 rounded-xl p-4">
             <div className="flex items-center justify-between gap-4">
               <div className="flex items-center gap-2 font-semibold">
-                <span>{track.title}</span>
+                <Link to={`/tracks/${track.id}`} className="hover:text-primary">
+                  {track.title}
+                </Link>
                 {track.official && (
                   <span className="text-[11px] font-semibold uppercase px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300">
                     {t('dashboard.official')}

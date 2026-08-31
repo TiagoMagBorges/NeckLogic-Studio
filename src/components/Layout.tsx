@@ -1,4 +1,4 @@
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../hooks/useAuth';
 import { LanguageDropdown } from './LanguageDropdown';
@@ -21,7 +21,9 @@ export function Layout() {
         </span>
         <div className="flex items-center gap-3 text-sm text-muted-foreground">
           <LanguageDropdown />
-          <span>{user?.name}</span>
+          <Link to="/account" className="hover:text-primary">
+            {user?.name}
+          </Link>
           <button
             type="button"
             onClick={handleLogout}

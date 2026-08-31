@@ -1,13 +1,11 @@
 import { createContext } from 'react';
 import type { StudioUser } from '../types/auth';
 
-export const TOKEN_KEY = 'necklogic_admin_token';
-export const USER_KEY = 'necklogic_admin_user';
-
 export interface AuthContextValue {
   user: StudioUser | null;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string, keepLoggedIn: boolean) => Promise<void>;
   verifyAccount: (email: string, token: string) => Promise<void>;
+  updateUser: (user: StudioUser) => void;
   logout: () => void;
 }
 
