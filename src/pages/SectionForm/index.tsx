@@ -86,7 +86,7 @@ export default function SectionFormPage() {
   }
 
   return (
-    <div className="max-w-[520px]">
+    <div className="max-w-[520px] mx-auto">
       <h1 className="text-2xl font-bold mb-6">
         {isEditing ? t('sectionForm.titleEdit') : t('sectionForm.titleNew')}
       </h1>

@@ -62,7 +62,7 @@ export default function SectionModulesPage() {
   }
 
   return (
-    <div>
+    <div className="max-w-[960px] mx-auto">
       <button
         type="button"
         onClick={() => navigate(`/tracks/${trackId}`)}

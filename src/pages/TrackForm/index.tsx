@@ -96,7 +96,7 @@ export default function TrackFormPage() {
   }
 
   return (
-    <div className="max-w-[520px]">
+    <div className="max-w-[520px] mx-auto">
       <h1 className="text-2xl font-bold mb-6">{isEditing ? t('trackForm.titleEdit') : t('trackForm.titleNew')}</h1>
 
       <form className="flex flex-col gap-5" onSubmit={handleSubmit}>

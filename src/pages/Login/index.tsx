@@ -2,7 +2,7 @@ import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { Mail, Lock } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../hooks/useAuth';
 import { LanguageDropdown } from '../../components/LanguageDropdown';
@@ -14,6 +14,7 @@ export default function LoginPage() {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [keepLoggedIn, setKeepLoggedIn] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -89,14 +90,23 @@ export default function LoginPage() {
               </span>
               <input
                 id="password"
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 placeholder={t('login.passwordPlaceholder')}
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
                 disabled={isSubmitting}
                 required
-                className="w-full bg-input-background border border-border/10 rounded-xl pl-12 pr-4 py-4 text-foreground text-[15px] focus:outline-none focus:border-primary"
+                className="w-full bg-input-background border border-border/10 rounded-xl pl-12 pr-12 py-4 text-foreground text-[15px] focus:outline-none focus:border-primary"
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                disabled={isSubmitting}
+                className="absolute right-4 text-muted-foreground"
+                tabIndex={-1}
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
             </div>
           </div>
 
