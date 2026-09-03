@@ -68,7 +68,7 @@ export default function TrackDetailPage() {
   }
 
   return (
-    <div>
+    <div className="max-w-[960px] mx-auto">
       <button
         type="button"
         onClick={() => navigate('/dashboard')}

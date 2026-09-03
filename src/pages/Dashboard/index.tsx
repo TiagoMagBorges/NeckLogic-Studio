@@ -44,7 +44,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div>
+    <div className="max-w-[960px] mx-auto">
       <div className="flex items-center justify-between mb-1">
         <h1 className="text-2xl font-bold">{t('dashboard.title')}</h1>
         <Link

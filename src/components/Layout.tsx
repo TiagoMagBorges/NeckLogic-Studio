@@ -34,7 +34,7 @@ export function Layout() {
         </div>
       </header>
 
-      <main className="px-6 py-6 max-w-[960px] mx-auto">
+      <main className="px-6 py-6">
         <Outlet />
       </main>
     </div>

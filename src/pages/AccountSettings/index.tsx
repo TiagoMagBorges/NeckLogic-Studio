@@ -84,7 +84,7 @@ export default function AccountSettingsPage() {
   }
 
   return (
-    <div className="max-w-[560px]">
+    <div className="max-w-[560px] mx-auto">
       <h1 className="text-2xl font-bold mb-6">{t('accountSettings.title')}</h1>
 
       <form className="flex flex-col gap-5 bg-card border border-border/10 rounded-xl p-6 mb-6" onSubmit={handleSaveProfile}>
