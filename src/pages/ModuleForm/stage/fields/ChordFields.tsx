@@ -1,6 +1,8 @@
+import { Play } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import type { LessonStep } from '../../../../types/lessonStep';
-import { CHROMATIC_SCALE, CHORD_QUALITY_KEYS } from '../../../../core/musicTheory';
+import { CHROMATIC_SCALE, CHORD_QUALITY_KEYS, noteWithOctaveFromStringAndFret } from '../../../../core/musicTheory';
+import { playNote } from '../../../../core/AudioEngine';
 import { inputClass, labelClass } from '../../stepEditorStyles';
 import { PlayerFretboard } from '../PlayerFretboard';
 import { computeChordPreviewNotes } from '../chordPreview';
@@ -18,6 +20,12 @@ export function ChordFields({ step, onChange, showInversion }: ChordFieldsProps)
   const inversion = (step.inversion as number) ?? 0;
 
   const previewNotes = computeChordPreviewNotes(root, quality);
+
+  function playChord() {
+    previewNotes.forEach((note, index) => {
+      setTimeout(() => playNote(noteWithOctaveFromStringAndFret(note.string, note.fret)), index * 120);
+    });
+  }
 
   return (
     <div className="flex flex-col gap-3">
@@ -66,6 +74,15 @@ export function ChordFields({ step, onChange, showInversion }: ChordFieldsProps)
       <div className="rounded-lg overflow-hidden">
         <PlayerFretboard frets={12} notes={previewNotes} />
       </div>
+
+      <button
+        type="button"
+        onClick={playChord}
+        className="flex items-center gap-1.5 self-start text-primary text-xs font-medium"
+      >
+        <Play size={14} />
+        {t('moduleForm.stepEditor.playChord')}
+      </button>
     </div>
   );
 }

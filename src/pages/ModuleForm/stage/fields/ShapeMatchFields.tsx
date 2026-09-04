@@ -1,7 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import { X } from 'lucide-react';
 import type { LessonStep, FretPosition } from '../../../../types/lessonStep';
-import { CHROMATIC_SCALE } from '../../../../core/musicTheory';
+import { CHROMATIC_SCALE, noteWithOctaveFromStringAndFret } from '../../../../core/musicTheory';
+import { playNote } from '../../../../core/AudioEngine';
 import { inputClass, labelClass } from '../../stepEditorStyles';
 import { PlayerFretboard } from '../PlayerFretboard';
 import { positionKey } from '../positionKey';
@@ -38,11 +39,13 @@ export function ShapeMatchFields({ step, onChange }: ShapeMatchFieldsProps) {
   const targetShape = (step.targetShape as FretPosition[]) ?? [];
 
   function toggleNote(note: string) {
+    playNote(`${note}4`);
     const next = targetNotes.includes(note) ? targetNotes.filter((n) => n !== note) : [...targetNotes, note];
     onChange({ targetNotes: next });
   }
 
   function toggleShapePosition(stringNumber: number, fret: number) {
+    playNote(noteWithOctaveFromStringAndFret(stringNumber, fret));
     const position = { string: stringNumber, fret };
     const exists = targetShape.some((p) => positionKey(p) === positionKey(position));
     const next = exists ? targetShape.filter((p) => positionKey(p) !== positionKey(position)) : [...targetShape, position];
@@ -69,7 +72,10 @@ export function ShapeMatchFields({ step, onChange }: ShapeMatchFieldsProps) {
           <label className={labelClass}>{t('moduleForm.stepEditor.fieldTargetNote')}</label>
           <select
             value={targetNote}
-            onChange={(event) => onChange({ targetNote: event.target.value })}
+            onChange={(event) => {
+              playNote(`${event.target.value}4`);
+              onChange({ targetNote: event.target.value });
+            }}
             className={inputClass}
           >
             {CHROMATIC_SCALE.map((note) => (

@@ -211,6 +211,7 @@ const resources = {
           optionHint: 'Select the correct option with the button on the left.',
           fieldRoot: 'Root note',
           fieldQuality: 'Quality',
+          playChord: 'Play chord',
           fieldInversion: 'Inversion',
           inversionRoot: 'Root position',
           inversionFirst: '1st inversion',
@@ -290,6 +291,13 @@ const resources = {
         circleHint: 'Click the keys to highlight in the diagram.',
         harmonicHint: 'Click the degrees to highlight in the diagram.',
         staffHint: 'Build the excerpt below — it becomes a static image for the student.',
+      },
+      theoryAudio: {
+        label: 'Audio (optional)',
+        enable: 'This step has audio',
+        hint: 'Build the sequence the student can play with the button — it can have its own rhythm, independent from the illustration.',
+        tempo: 'Tempo (BPM)',
+        play: 'Play',
       },
       sectionForm: {
         titleNew: 'New Section',
@@ -518,6 +526,7 @@ const resources = {
           optionHint: 'Selecione a opção correta com o botão à esquerda.',
           fieldRoot: 'Nota raiz',
           fieldQuality: 'Qualidade',
+          playChord: 'Tocar acorde',
           fieldInversion: 'Inversão',
           inversionRoot: 'Fundamental',
           inversionFirst: '1ª inversão',
@@ -597,6 +606,13 @@ const resources = {
         circleHint: 'Clique nas notas pra destacar no diagrama.',
         harmonicHint: 'Clique nos graus pra destacar no diagrama.',
         staffHint: 'Monte o trecho abaixo — vira uma imagem estática pro aluno.',
+      },
+      theoryAudio: {
+        label: 'Áudio (opcional)',
+        enable: 'Este passo tem áudio',
+        hint: 'Monte a sequência que o aluno pode tocar pelo botão — pode ter um ritmo próprio, independente da ilustração.',
+        tempo: 'Andamento (BPM)',
+        play: 'Tocar',
       },
       sectionForm: {
         titleNew: 'Nova Seção',

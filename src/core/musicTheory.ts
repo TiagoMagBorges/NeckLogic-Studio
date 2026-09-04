@@ -13,6 +13,21 @@ export function noteFromStringAndFret(stringNumber: number, fret: number, tuning
   return openNote ? noteAtFret(openNote, fret) : '';
 }
 
+const OPEN_STRING_OCTAVES = [2, 2, 3, 3, 3, 4];
+
+export function noteWithOctaveFromStringAndFret(stringNumber: number, fret: number, tuning: string[] = STANDARD_TUNING): string {
+  const arrayIndex = tuning.length - stringNumber;
+  const openNote = tuning[arrayIndex];
+  const openOctave = OPEN_STRING_OCTAVES[arrayIndex] ?? 3;
+  const openIndex = CHROMATIC_SCALE.indexOf(openNote.toUpperCase() as (typeof CHROMATIC_SCALE)[number]);
+
+  const absoluteSemitone = openOctave * 12 + (openIndex === -1 ? 0 : openIndex) + fret;
+  const note = CHROMATIC_SCALE[((absoluteSemitone % 12) + 12) % 12];
+  const octave = Math.floor(absoluteSemitone / 12);
+
+  return `${note}${octave}`;
+}
+
 export const CHORD_QUALITY_KEYS = ['major', 'minor', 'maj7', 'min7', 'dom7', 'dim', 'aug', 'sus2', 'sus4'] as const;
 
 const CHORD_QUALITY_INTERVALS: Record<(typeof CHORD_QUALITY_KEYS)[number], number[]> = {
@@ -97,6 +112,13 @@ export function parseNoteWithOctave(noteWithOctave: string): ParsedNote {
 
 export function formatNoteWithOctave(letter: string, accidental: Accidental, octave: number): string {
   return `${letter}${ACCIDENTAL_SYMBOL[accidental]}${octave}`;
+}
+
+export function getAbsoluteSemitone(noteWithOctave: string): number {
+  const { letter, accidental, octave } = parseNoteWithOctave(noteWithOctave);
+  const naturalIndex = CHROMATIC_SCALE.indexOf(letter as (typeof CHROMATIC_SCALE)[number]);
+  const offset = accidental === 'sharp' ? 1 : accidental === 'flat' ? -1 : 0;
+  return octave * 12 + (((naturalIndex === -1 ? 0 : naturalIndex) + offset + 12) % 12);
 }
 
 const NATURAL_NOTE_ORDER = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
