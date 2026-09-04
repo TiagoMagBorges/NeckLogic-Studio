@@ -2,8 +2,9 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Plus, Trash2, X } from 'lucide-react';
 import type { LessonStep, StaffNoteEntry, ClefType, NoteDuration, FretPosition } from '../../../../types/lessonStep';
-import { NOTE_LETTERS, ACCIDENTALS, parseNoteWithOctave, formatNoteWithOctave } from '../../../../core/musicTheory';
+import { NOTE_LETTERS, ACCIDENTALS, parseNoteWithOctave, formatNoteWithOctave, noteWithOctaveFromStringAndFret } from '../../../../core/musicTheory';
 import type { Accidental } from '../../../../core/musicTheory';
+import { playNote } from '../../../../core/AudioEngine';
 import { inputClass, labelClass } from '../../stepEditorStyles';
 import { PlayerFretboard } from '../PlayerFretboard';
 import { PlayerStaffDisplay } from '../PlayerStaffDisplay';
@@ -114,7 +115,9 @@ function StaffNoteRow({ entry, onChange, onRemove }: StaffNoteRowProps) {
 
   function setNotePart(part: Partial<{ letter: string; accidental: Accidental; octave: number }>) {
     const next = { ...parsed, ...part };
-    onChange({ note: formatNoteWithOctave(next.letter, next.accidental, next.octave) });
+    const noteWithOctave = formatNoteWithOctave(next.letter, next.accidental, next.octave);
+    playNote(noteWithOctave);
+    onChange({ note: noteWithOctave });
   }
 
   function toggleRest() {
@@ -123,6 +126,7 @@ function StaffNoteRow({ entry, onChange, onRemove }: StaffNoteRowProps) {
   }
 
   function setTarget(stringNumber: number, fret: number) {
+    playNote(noteWithOctaveFromStringAndFret(stringNumber, fret));
     const position = { string: stringNumber, fret };
     const isSame = entry.target && positionKey(entry.target) === positionKey(position);
     onChange({ target: isSame ? undefined : position });

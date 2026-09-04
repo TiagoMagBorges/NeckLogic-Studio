@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { X } from 'lucide-react';
-import type { LessonStep, StepKind } from '../../../types/lessonStep';
+import { X, Volume2 } from 'lucide-react';
+import type { LessonStep, StepKind, TheoryAudioSequence } from '../../../types/lessonStep';
 import { stepLabel } from '../stepDefaults';
+import { playSequence } from '../../../core/AudioEngine';
 import { TheoryIllustrationView } from './TheoryIllustrationView';
 import { ExercisePreview } from './ExercisePreview';
 
@@ -63,6 +64,19 @@ export function PhoneStage({ step, kind, stepIndex, totalSteps, onNext, onClose 
         {kind === 'THEORY' ? (
           <>
             {step.text && <p className="text-[14.5px] leading-relaxed text-foreground/85 whitespace-pre-wrap">{step.text}</p>}
+            {!!step.audio && (
+              <button
+                type="button"
+                onClick={() => {
+                  const audio = step.audio as TheoryAudioSequence;
+                  playSequence(audio.sequence, audio.tempo);
+                }}
+                className="flex items-center self-center gap-2 bg-primary/10 border border-primary/30 rounded-full px-4 py-2 text-primary text-sm font-semibold"
+              >
+                <Volume2 size={16} />
+                {t('theoryAudio.play')}
+              </button>
+            )}
             {step.illustration && <TheoryIllustrationView illustration={step.illustration} />}
           </>
         ) : (

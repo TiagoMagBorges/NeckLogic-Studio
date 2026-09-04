@@ -1,6 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import { X } from 'lucide-react';
 import type { LessonStep, FretPosition } from '../../../../types/lessonStep';
+import { noteWithOctaveFromStringAndFret } from '../../../../core/musicTheory';
+import { playNote } from '../../../../core/AudioEngine';
 import { labelClass } from '../../stepEditorStyles';
 import { PlayerFretboard } from '../PlayerFretboard';
 import { positionKey } from '../positionKey';
@@ -15,6 +17,7 @@ export function SequenceFields({ step, onChange }: SequenceFieldsProps) {
   const targetSequence = (step.targetSequence as FretPosition[]) ?? [];
 
   function addPosition(stringNumber: number, fret: number) {
+    playNote(noteWithOctaveFromStringAndFret(stringNumber, fret));
     onChange({ targetSequence: [...targetSequence, { string: stringNumber, fret }] });
   }
 

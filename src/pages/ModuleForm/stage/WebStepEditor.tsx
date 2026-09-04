@@ -4,6 +4,7 @@ import type { LessonStep, StepKind } from '../../../types/lessonStep';
 import { stepLabel } from '../stepDefaults';
 import { inputClass, labelClass } from '../stepEditorStyles';
 import { TheoryIllustrationBuilder } from './TheoryIllustrationBuilder';
+import { AudioSequenceBuilder } from './AudioSequenceBuilder';
 import { MultipleChoiceFields } from './fields/MultipleChoiceFields';
 import { ChordFields } from './fields/ChordFields';
 import { CircleOfFifthsFields } from './fields/CircleOfFifthsFields';
@@ -80,6 +81,11 @@ function TheoryStepFields({ step, onStepChange }: { step: LessonStep; onStepChan
       <div className="flex flex-col gap-1.5">
         <span className="text-xs font-medium text-muted-foreground ml-1">{t('theoryIllustration.label')}</span>
         <TheoryIllustrationBuilder step={step} onChange={onStepChange} />
+      </div>
+
+      <div className="flex flex-col gap-1.5">
+        <span className="text-xs font-medium text-muted-foreground ml-1">{t('theoryAudio.label')}</span>
+        <AudioSequenceBuilder step={step} onChange={onStepChange} />
       </div>
     </>
   );
