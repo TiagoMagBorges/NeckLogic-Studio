@@ -33,7 +33,7 @@ export function SequenceFields({ step, onChange }: SequenceFieldsProps) {
     <div className="flex flex-col gap-2">
       <label className={labelClass}>{t('moduleForm.stepEditor.sequenceHint')}</label>
       <div className="rounded-lg overflow-hidden">
-        <PlayerFretboard frets={12} notes={targetSequence} onCellClick={addPosition} />
+        <PlayerFretboard frets={24} notes={targetSequence} onCellClick={addPosition} />
       </div>
 
       {targetSequence.length === 0 ? (

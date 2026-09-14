@@ -14,7 +14,7 @@ export function TheoryIllustrationView({ illustration }: TheoryIllustrationViewP
     const notes = illustration.notes.map((p) => ({ ...p, label: noteFromStringAndFret(p.string, p.fret) }));
     return (
       <div className="rounded-lg overflow-hidden">
-        <PlayerFretboard frets={12} notes={notes} />
+        <PlayerFretboard frets={24} notes={notes} />
       </div>
     );
   }

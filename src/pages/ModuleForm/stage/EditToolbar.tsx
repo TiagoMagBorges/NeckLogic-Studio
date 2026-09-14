@@ -1,10 +1,12 @@
 import { useTranslation } from 'react-i18next';
-import { ChevronLeft, ChevronRight, Plus, Trash2, Smartphone } from 'lucide-react';
+import { Smartphone } from 'lucide-react';
 import type { StepKind } from '../../../types/lessonStep';
 import { SIMPLE_STEP_KINDS, ADVANCED_STEP_KINDS, stepLabel } from '../stepDefaults';
 
 const inputClass =
   'bg-input-background border border-border/10 rounded-lg px-2 py-1.5 text-foreground text-xs focus:outline-none focus:border-primary';
+
+const numericInputClass = `${inputClass} font-mono`;
 
 interface EditToolbarProps {
   moduleTitle: string;
@@ -13,15 +15,8 @@ interface EditToolbarProps {
   onOrderIndexChange: (value: string) => void;
   xpReward: string;
   onXpRewardChange: (value: string) => void;
-  stepIndex: number;
-  totalSteps: number;
-  onPrevStep: () => void;
-  onNextStep: () => void;
   stepKind: StepKind;
   onStepKindChange: (kind: StepKind) => void;
-  onAddStep: () => void;
-  onRemoveStep: () => void;
-  canRemoveStep: boolean;
   previewOpen: boolean;
   onTogglePreview: () => void;
 }
@@ -33,15 +28,8 @@ export function EditToolbar({
                               onOrderIndexChange,
                               xpReward,
                               onXpRewardChange,
-                              stepIndex,
-                              totalSteps,
-                              onPrevStep,
-                              onNextStep,
                               stepKind,
                               onStepKindChange,
-                              onAddStep,
-                              onRemoveStep,
-                              canRemoveStep,
                               previewOpen,
                               onTogglePreview,
                             }: EditToolbarProps) {
@@ -62,7 +50,7 @@ export function EditToolbar({
           type="text"
           value={orderIndex}
           onChange={(event) => onOrderIndexChange(event.target.value)}
-          className={`${inputClass} w-12 text-center`}
+          className={`${numericInputClass} w-12 text-center`}
         />
       </div>
       <div className="flex flex-col gap-0.5">
@@ -71,26 +59,9 @@ export function EditToolbar({
           type="text"
           value={xpReward}
           onChange={(event) => onXpRewardChange(event.target.value)}
-          className={`${inputClass} w-12 text-center`}
+          className={`${numericInputClass} w-12 text-center`}
         />
       </div>
-
-      <div className="w-px self-stretch bg-border/10" />
-
-      <button type="button" onClick={onPrevStep} disabled={stepIndex === 0} className="p-1.5 rounded-lg border border-border/10 text-muted-foreground disabled:opacity-30">
-        <ChevronLeft size={15} />
-      </button>
-      <span className="text-xs font-semibold text-muted-foreground whitespace-nowrap">
-        {t('stage.stepCount', { current: stepIndex + 1, total: totalSteps })}
-      </span>
-      <button
-        type="button"
-        onClick={onNextStep}
-        disabled={stepIndex === totalSteps - 1}
-        className="p-1.5 rounded-lg border border-border/10 text-muted-foreground disabled:opacity-30"
-      >
-        <ChevronRight size={15} />
-      </button>
 
       <select
         value={stepKind}
@@ -112,19 +83,6 @@ export function EditToolbar({
           ))}
         </optgroup>
       </select>
-
-      <button type="button" onClick={onAddStep} title={t('stage.addStep')} className="p-1.5 rounded-lg border border-border/10 text-primary">
-        <Plus size={15} />
-      </button>
-      <button
-        type="button"
-        onClick={onRemoveStep}
-        disabled={!canRemoveStep}
-        title={t('stage.removeStep')}
-        className="p-1.5 rounded-lg border border-destructive/40 text-destructive disabled:opacity-30"
-      >
-        <Trash2 size={15} />
-      </button>
 
       <button
         type="button"

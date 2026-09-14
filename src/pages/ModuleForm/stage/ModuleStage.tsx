@@ -5,6 +5,8 @@ import { createStep } from '../stepDefaults';
 import { EditToolbar } from './EditToolbar';
 import { WebStepEditor } from './WebStepEditor';
 import { PhoneStage } from './PhoneStage';
+import { StepRail } from './StepRail';
+import { ConfirmDialog } from '../../../components/ConfirmDialog';
 
 interface ModuleStageProps {
   moduleTitle: string;
@@ -30,6 +32,7 @@ export function ModuleStage({
   const { t } = useTranslation();
   const [stepIndex, setStepIndex] = useState(0);
   const [previewOpen, setPreviewOpen] = useState(false);
+  const [deleteIndex, setDeleteIndex] = useState<number | null>(null);
 
   const safeIndex = Math.min(stepIndex, Math.max(steps.length - 1, 0));
   const currentStep: LessonStep | undefined = steps[safeIndex];
@@ -56,19 +59,27 @@ export function ModuleStage({
     setStepIndex(insertAt);
   }
 
-  function removeStep() {
-    if (steps.length <= 1) return;
-    const next = steps.filter((_, i) => i !== safeIndex);
+  function confirmDelete() {
+    if (deleteIndex === null) return;
+    const index = deleteIndex;
+    setDeleteIndex(null);
+    const next = steps.filter((_, i) => i !== index);
     onStepsChange(next);
-    setStepIndex(Math.max(0, safeIndex - 1));
+    setStepIndex((current) => (index <= current ? Math.max(0, current - 1) : current));
   }
 
-  function goNext() {
-    setStepIndex((i) => Math.min(i + 1, steps.length - 1));
-  }
+  function reorderSteps(fromIndex: number, toIndex: number) {
+    const next = [...steps];
+    const [moved] = next.splice(fromIndex, 1);
+    next.splice(toIndex, 0, moved);
+    onStepsChange(next);
 
-  function goPrev() {
-    setStepIndex((i) => Math.max(i - 1, 0));
+    setStepIndex((current) => {
+      if (current === fromIndex) return toIndex;
+      if (fromIndex < current && toIndex >= current) return current - 1;
+      if (fromIndex > current && toIndex <= current) return current + 1;
+      return current;
+    });
   }
 
   if (!currentStep) {
@@ -99,37 +110,57 @@ export function ModuleStage({
         onOrderIndexChange={onOrderIndexChange}
         xpReward={xpReward}
         onXpRewardChange={onXpRewardChange}
-        stepIndex={safeIndex}
-        totalSteps={steps.length}
-        onPrevStep={goPrev}
-        onNextStep={goNext}
         stepKind={kind}
         onStepKindChange={changeStepKind}
-        onAddStep={addStep}
-        onRemoveStep={removeStep}
-        canRemoveStep={steps.length > 1}
         previewOpen={previewOpen}
         onTogglePreview={() => setPreviewOpen((v) => !v)}
       />
 
-      <div className={`flex flex-col ${previewOpen ? 'md:flex-row' : ''} items-start gap-4`}>
-        <div className={`w-full min-w-0 ${previewOpen ? 'md:w-1/2 xl:w-[70%]' : ''}`}>
-          <WebStepEditor step={currentStep} kind={kind} onStepChange={updateStep} />
-        </div>
+      <div className="flex flex-col md:flex-row items-start gap-4">
+        <StepRail
+          steps={steps}
+          currentIndex={safeIndex}
+          onSelect={setStepIndex}
+          onAddStep={addStep}
+          onRequestDelete={setDeleteIndex}
+          onReorder={reorderSteps}
+          canDelete={steps.length > 1}
+        />
 
-        {previewOpen && (
-          <div className="w-full md:w-1/2 xl:w-[30%] flex justify-center">
-            <PhoneStage
-              step={currentStep}
-              kind={kind}
-              stepIndex={safeIndex}
-              totalSteps={steps.length}
-              onNext={goNext}
-              onClose={() => setPreviewOpen(false)}
-            />
+        <div className={`flex flex-col ${previewOpen ? 'md:flex-row' : ''} items-start gap-4 flex-1 min-w-0 w-full`}>
+          <div className={`w-full min-w-0 ${previewOpen ? 'md:w-1/2 xl:w-[70%]' : ''}`}>
+            <WebStepEditor step={currentStep} kind={kind} onStepChange={updateStep} />
           </div>
-        )}
+
+          {previewOpen && (
+            <div className="w-full md:w-1/2 xl:w-[30%] flex justify-center">
+              <PhoneStage
+                step={currentStep}
+                kind={kind}
+                stepIndex={safeIndex}
+                totalSteps={steps.length}
+                onNext={() => setStepIndex((i) => Math.min(i + 1, steps.length - 1))}
+                onClose={() => setPreviewOpen(false)}
+              />
+            </div>
+          )}
+        </div>
       </div>
+
+      <ConfirmDialog
+        open={deleteIndex !== null}
+        title={t('stage.deleteStepTitle')}
+        message={
+          deleteIndex !== null
+            ? t('stage.deleteStepConfirm', {
+                title: steps[deleteIndex]?.title || t('moduleForm.stepEditor.defaultDrillTitle'),
+              })
+            : ''
+        }
+        danger
+        onConfirm={confirmDelete}
+        onCancel={() => setDeleteIndex(null)}
+      />
     </div>
   );
 }

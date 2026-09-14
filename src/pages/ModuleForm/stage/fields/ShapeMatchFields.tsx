@@ -117,7 +117,7 @@ export function ShapeMatchFields({ step, onChange }: ShapeMatchFieldsProps) {
           <label className={labelClass}>{t('moduleForm.stepEditor.fretboardHint')}</label>
           <div className="rounded-lg overflow-hidden">
             <PlayerFretboard
-              frets={12}
+              frets={24}
               notes={targetShape.map((p) => ({ ...p }))}
               onCellClick={toggleShapePosition}
             />

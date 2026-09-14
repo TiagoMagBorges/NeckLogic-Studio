@@ -5,4 +5,5 @@ export interface ModuleDetail {
   xpReward: number;
   content: string | null;
   sectionId: number;
+  isSkipTest: boolean;
 }

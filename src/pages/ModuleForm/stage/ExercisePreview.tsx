@@ -70,13 +70,14 @@ function MultipleChoicePreview({ step }: { step: LessonStep }) {
 }
 
 function ChordPreview({ step }: { step: LessonStep }) {
-  const root = (step.root as string) ?? 'C';
-  const quality = (step.quality as string) ?? 'major';
-  const notes = computeChordPreviewNotes(root, quality);
+  const root = step.root as string | undefined;
+  const quality = step.quality as string | undefined;
+  const chordShape = step.chordShape as FretPosition[] | undefined;
+  const notes = chordShape ?? (root && quality ? computeChordPreviewNotes(root, quality) : []);
 
   return (
     <div className="rounded-lg overflow-hidden">
-      <PlayerFretboard frets={12} notes={notes} />
+      <PlayerFretboard frets={24} notes={notes} />
     </div>
   );
 }
@@ -88,7 +89,7 @@ function ShapeMatchPreview({ step }: { step: LessonStep }) {
     const shape = step.targetShape as FretPosition[];
     return (
       <div className="rounded-lg overflow-hidden">
-        <PlayerFretboard frets={12} notes={shape} />
+        <PlayerFretboard frets={24} notes={shape} />
       </div>
     );
   }
@@ -117,7 +118,7 @@ function SequencePreview({ sequence }: { sequence: FretPosition[] }) {
   const notes = sequence.map((p, index) => ({ ...p, label: String(index + 1) }));
   return (
     <div className="rounded-lg overflow-hidden">
-      <PlayerFretboard frets={12} notes={notes} />
+      <PlayerFretboard frets={24} notes={notes} />
     </div>
   );
 }

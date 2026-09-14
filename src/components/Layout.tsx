@@ -1,42 +1,21 @@
-import { Link, Outlet, useNavigate } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
-import { useAuth } from '../hooks/useAuth';
+import { Outlet } from 'react-router-dom';
+import { Sidebar } from './Sidebar';
 import { LanguageDropdown } from './LanguageDropdown';
 
 export function Layout() {
-  const { user, logout } = useAuth();
-  const navigate = useNavigate();
-  const { t } = useTranslation();
-
-  function handleLogout() {
-    logout();
-    navigate('/login', { replace: true });
-  }
-
   return (
-    <div className="min-h-screen bg-background">
-      <header className="flex items-center justify-between px-6 py-4 border-b border-border/10">
-        <span className="font-bold text-lg tracking-tight">
-          Neck<span className="text-primary">Logic</span> Studio
-        </span>
-        <div className="flex items-center gap-3 text-sm text-muted-foreground">
-          <LanguageDropdown />
-          <Link to="/account" className="hover:text-primary">
-            {user?.name}
-          </Link>
-          <button
-            type="button"
-            onClick={handleLogout}
-            className="border border-border/10 text-foreground rounded-lg px-3 py-2 text-sm"
-          >
-            {t('layout.signOut')}
-          </button>
-        </div>
-      </header>
+    <div className="min-h-screen bg-background flex">
+      <Sidebar />
 
-      <main className="px-6 py-6">
-        <Outlet />
-      </main>
+      <div className="flex-1 min-w-0 flex flex-col">
+        <header className="flex items-center justify-end px-6 py-3.5 border-b border-border/10">
+          <LanguageDropdown />
+        </header>
+
+        <main className="flex-1 px-6 py-6">
+          <Outlet />
+        </main>
+      </div>
     </div>
   );
 }
