@@ -113,7 +113,7 @@ function FretboardIllustrationEditor({
     <div className="flex flex-col gap-1.5">
       <p className="text-muted-foreground text-[11px]">{t('theoryIllustration.fretboardHint')}</p>
       <div className="rounded-lg overflow-hidden">
-        <PlayerFretboard frets={12} notes={displayNotes} onCellClick={toggle} />
+        <PlayerFretboard frets={24} notes={displayNotes} onCellClick={toggle} />
       </div>
     </div>
   );

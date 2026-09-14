@@ -112,7 +112,7 @@ export default function VerifyPage() {
           <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-6">
             <Mail size={32} className="text-primary" />
           </div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground mb-2 text-center">
+          <h1 className="font-serif text-3xl font-bold tracking-tight text-foreground mb-2 text-center">
             {t('verify.title')}
           </h1>
           <p className="text-muted-foreground text-sm text-center leading-relaxed">

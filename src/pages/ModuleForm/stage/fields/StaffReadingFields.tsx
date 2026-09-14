@@ -222,7 +222,7 @@ function StaffNoteRow({ entry, onChange, onRemove }: StaffNoteRowProps) {
           {showTargetPicker && (
             <div className="rounded-lg overflow-hidden">
               <PlayerFretboard
-                frets={12}
+                frets={24}
                 notes={entry.target ? [entry.target as FretPosition] : []}
                 onCellClick={setTarget}
               />

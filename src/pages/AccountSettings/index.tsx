@@ -1,15 +1,23 @@
 import { useState } from 'react';
 import type { FormEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { User, Mail, Lock, Trash2 } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { User, Mail, Lock, LogOut, Trash2, ArrowLeft } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { api } from '../../services/api';
 import { useAuth } from '../../hooks/useAuth';
+import { ConfirmDialog } from '../../components/ConfirmDialog';
+import { Toast } from '../../components/Toast';
+import { useToast } from '../../hooks/useToast';
 
 export default function AccountSettingsPage() {
   const { user, updateUser, logout } = useAuth();
   const navigate = useNavigate();
   const { t } = useTranslation();
+
+  function handleSignOut() {
+    logout();
+    navigate('/login', { replace: true });
+  }
 
   const [name, setName] = useState(user?.name ?? '');
   const [email, setEmail] = useState(user?.email ?? '');
@@ -25,6 +33,8 @@ export default function AccountSettingsPage() {
   const [passwordSuccess, setPasswordSuccess] = useState(false);
 
   const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const { toast, showToast } = useToast();
 
   async function handleSaveProfile(event: FormEvent) {
     event.preventDefault();
@@ -69,8 +79,7 @@ export default function AccountSettingsPage() {
   }
 
   async function handleDeleteAccount() {
-    if (!confirm(t('accountSettings.deleteConfirm'))) return;
-
+    setDeleteDialogOpen(false);
     setIsDeleting(true);
 
     try {
@@ -78,14 +87,33 @@ export default function AccountSettingsPage() {
       logout();
       navigate('/login', { replace: true });
     } catch {
-      alert(t('accountSettings.errorDelete'));
+      showToast(t('accountSettings.errorDelete'), 'error');
       setIsDeleting(false);
     }
   }
 
   return (
     <div className="max-w-[560px] mx-auto">
-      <h1 className="text-2xl font-bold mb-6">{t('accountSettings.title')}</h1>
+      <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-4">
+        <Link to="/dashboard" className="flex items-center gap-1 hover:text-foreground">
+          <ArrowLeft size={13} />
+          {t('dashboard.title')}
+        </Link>
+        <span>/</span>
+        <span className="text-foreground font-semibold">{t('accountSettings.title')}</span>
+      </div>
+
+      <div className="flex items-center justify-between gap-4 mb-6">
+        <h1 className="font-serif text-2xl font-bold">{t('accountSettings.title')}</h1>
+        <button
+          type="button"
+          onClick={() => navigate('/dashboard')}
+          className="flex items-center gap-1.5 text-sm font-medium border border-border/10 rounded-lg px-3 py-1.5 text-foreground shrink-0"
+        >
+          <ArrowLeft size={14} />
+          {t('accountSettings.backToDashboard')}
+        </button>
+      </div>
 
       <form className="flex flex-col gap-5 bg-card border border-border/10 rounded-xl p-6 mb-6" onSubmit={handleSaveProfile}>
         <h2 className="text-lg font-semibold">{t('accountSettings.personalInfo')}</h2>
@@ -219,11 +247,23 @@ export default function AccountSettingsPage() {
         </button>
       </form>
 
+      <div className="flex flex-col gap-4 bg-card border border-border/10 rounded-xl p-6 mb-6">
+        <h2 className="text-lg font-semibold">{t('accountSettings.accountActions')}</h2>
+        <button
+          type="button"
+          onClick={handleSignOut}
+          className="flex items-center gap-2 py-3 px-6 rounded-xl font-bold text-foreground border border-border/10 self-start"
+        >
+          <LogOut size={18} />
+          {t('accountSettings.signOut')}
+        </button>
+      </div>
+
       <div className="flex flex-col gap-4 bg-card border border-destructive/30 rounded-xl p-6">
         <h2 className="text-lg font-semibold text-destructive">{t('accountSettings.dangerZone')}</h2>
         <button
           type="button"
-          onClick={handleDeleteAccount}
+          onClick={() => setDeleteDialogOpen(true)}
           disabled={isDeleting}
           className="flex items-center gap-2 py-3 px-6 rounded-xl font-bold text-destructive border border-destructive/40 self-start disabled:opacity-60"
         >
@@ -231,6 +271,16 @@ export default function AccountSettingsPage() {
           {isDeleting ? t('accountSettings.deleting') : t('accountSettings.deleteAccount')}
         </button>
       </div>
+
+      <ConfirmDialog
+        open={deleteDialogOpen}
+        title={t('accountSettings.deleteAccount')}
+        message={t('accountSettings.deleteConfirm')}
+        danger
+        onConfirm={handleDeleteAccount}
+        onCancel={() => setDeleteDialogOpen(false)}
+      />
+      <Toast toast={toast} />
     </div>
   );
 }

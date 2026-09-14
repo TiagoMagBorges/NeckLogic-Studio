@@ -34,9 +34,9 @@ export function createStep(kind: StepKind): LessonStep {
     case 'MULTIPLE_CHOICE':
       return { ...base, question: '', options: ['', ''], correctAnswer: '' };
     case 'CHORD_BUILD':
-      return { ...base, root: 'C', quality: 'major' };
+      return { ...base, root: '', quality: '' };
     case 'TRIAD_INVERSION':
-      return { ...base, root: 'C', quality: 'major', inversion: 0 };
+      return { ...base, root: '', quality: '', inversion: 0 };
     case 'CIRCLE_OF_FIFTHS':
       return { ...base, question: '', targetKey: 'C' };
     case 'HARMONIC_FIELD':

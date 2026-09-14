@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { ArrowLeft } from 'lucide-react';
 import { api } from '../../services/api';
 import type { ModuleDetail } from '../../types/module';
 import type { Section } from '../../types/section';
@@ -18,7 +19,9 @@ function parseSteps(raw: string): LessonStep[] | null {
 
 export default function ModuleFormPage() {
   const { trackId, sectionId, moduleId } = useParams();
+  const [searchParams] = useSearchParams();
   const isEditing = !!moduleId;
+  const isCreatingTestModule = !isEditing && searchParams.get('asTest') === '1';
   const navigate = useNavigate();
   const { t } = useTranslation();
 
@@ -26,6 +29,7 @@ export default function ModuleFormPage() {
   const [orderIndex, setOrderIndex] = useState('1');
   const [xpReward, setXpReward] = useState('50');
   const [steps, setSteps] = useState<LessonStep[]>([]);
+  const [sectionTitle, setSectionTitle] = useState('');
 
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -36,6 +40,11 @@ export default function ModuleFormPage() {
 
     async function fetchData() {
       try {
+        const sectionsResponse = await api.get<Section[]>(`/tracks/${trackId}/sections`);
+        if (cancelled) return;
+        const section = sectionsResponse.data.find((item) => String(item.id) === sectionId);
+        setSectionTitle(section?.title ?? '');
+
         if (isEditing) {
           const response = await api.get<ModuleDetail>(`/modules/${moduleId}`);
           if (cancelled) return;
@@ -47,11 +56,11 @@ export default function ModuleFormPage() {
           const parsed = raw.trim() ? parseSteps(raw) : [];
           setSteps(parsed ?? []);
         } else {
-          const response = await api.get<Section[]>(`/tracks/${trackId}/sections`);
-          if (cancelled) return;
-          const section = response.data.find((item) => String(item.id) === sectionId);
           const nextOrder = section ? section.modules.reduce((max, m) => Math.max(max, m.orderIndex), 0) + 1 : 1;
           setOrderIndex(String(nextOrder));
+          if (isCreatingTestModule) {
+            setTitle(t('moduleForm.testModuleDefaultTitle'));
+          }
         }
       } catch {
         if (!cancelled) setError(t('moduleForm.errorLoad'));
@@ -64,7 +73,7 @@ export default function ModuleFormPage() {
     return () => {
       cancelled = true;
     };
-  }, [trackId, sectionId, moduleId, isEditing, t]);
+  }, [trackId, sectionId, moduleId, isEditing, isCreatingTestModule, t]);
 
   async function handleSave() {
     setError(null);
@@ -80,16 +89,22 @@ export default function ModuleFormPage() {
           xpReward: Number(xpReward),
           content,
         });
+        navigate(`/tracks/${trackId}/sections/${sectionId}/modules`, { replace: true, state: { toast: 'saved' } });
       } else {
         await api.post(`/sections/${sectionId}/modules`, {
           title,
           orderIndex: Number(orderIndex),
           xpReward: Number(xpReward),
           content,
+          isSkipTest: isCreatingTestModule,
         });
-      }
 
-      navigate(`/tracks/${trackId}/sections/${sectionId}/modules`, { replace: true });
+        if (isCreatingTestModule) {
+          navigate(`/tracks/${trackId}/sections/${sectionId}`, { replace: true, state: { toast: 'saved' } });
+        } else {
+          navigate(`/tracks/${trackId}/sections/${sectionId}/modules`, { replace: true, state: { toast: 'saved' } });
+        }
+      }
     } catch {
       setError(t('moduleForm.errorSave'));
     } finally {
@@ -98,7 +113,11 @@ export default function ModuleFormPage() {
   }
 
   function handleCancel() {
-    navigate(`/tracks/${trackId}/sections/${sectionId}/modules`);
+    if (isCreatingTestModule) {
+      navigate(`/tracks/${trackId}/sections/${sectionId}`);
+    } else {
+      navigate(`/tracks/${trackId}/sections/${sectionId}/modules`);
+    }
   }
 
   if (isLoading) {
@@ -107,8 +126,25 @@ export default function ModuleFormPage() {
 
   return (
     <div>
+      {sectionTitle && (
+        <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-4">
+          <Link to={`/tracks/${trackId}/sections/${sectionId}/modules`} className="flex items-center gap-1 hover:text-foreground">
+            <ArrowLeft size={13} />
+            {sectionTitle}
+          </Link>
+          <span>/</span>
+          <span className="text-foreground font-semibold">{title || t('moduleForm.titleNew')}</span>
+        </div>
+      )}
+
       <div className="flex items-center justify-between mb-5">
-        <h1 className="text-2xl font-bold">{isEditing ? t('moduleForm.titleEdit') : t('moduleForm.titleNew')}</h1>
+        <h1 className="font-serif text-2xl font-bold">
+          {isCreatingTestModule
+            ? t('moduleForm.titleNewTestModule')
+            : isEditing
+              ? t('moduleForm.titleEdit')
+              : t('moduleForm.titleNew')}
+        </h1>
         <div className="flex gap-3">
           <button
             type="button"
