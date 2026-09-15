@@ -1,16 +1,13 @@
 import i18n from '../../i18n';
 import type { LessonStep, StepKind } from '../../types/lessonStep';
 
-export const SIMPLE_STEP_KINDS: StepKind[] = [
+export const STEP_KINDS: StepKind[] = [
   'THEORY',
   'MULTIPLE_CHOICE',
   'CHORD_BUILD',
   'TRIAD_INVERSION',
   'CIRCLE_OF_FIFTHS',
   'HARMONIC_FIELD',
-];
-
-export const ADVANCED_STEP_KINDS: StepKind[] = [
   'SHAPE_MATCH',
   'FIND_ALL_OCCURRENCES',
   'SCALE_DEGREES',

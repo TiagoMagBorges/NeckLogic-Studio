@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Plus, Layers } from 'lucide-react';
+import { Plus, Layers, Star } from 'lucide-react';
 import { api } from '../../services/api';
 import { useAuth } from '../../hooks/useAuth';
 import { ConfirmDialog } from '../../components/ConfirmDialog';
@@ -11,7 +11,8 @@ import type { Track } from '../../types/track';
 
 export default function DashboardPage() {
   const { user } = useAuth();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const currencyPrefix = i18n.language === 'pt-BR' ? 'R$' : '$';
   const [tracks, setTracks] = useState<Track[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -55,6 +56,20 @@ export default function DashboardPage() {
   const draftCount = tracks.length - publishedCount;
   const officialCount = tracks.filter((track) => track.official).length;
 
+  const totalEnrolled = tracks.reduce((sum, track) => sum + track.enrolledCount, 0);
+  const totalCompletions = tracks.reduce((sum, track) => sum + track.completedCount, 0);
+  const totalRatingCount = tracks.reduce((sum, track) => sum + track.ratingCount, 0);
+  const weightedRatingSum = tracks.reduce(
+    (sum, track) => sum + (track.averageRating ?? 0) * track.ratingCount,
+    0,
+  );
+  const overallAverageRating = totalRatingCount > 0 ? weightedRatingSum / totalRatingCount : null;
+  const totalRevenueCents = tracks.reduce((sum, track) => sum + track.estimatedRevenueCents, 0);
+  const totalRevenueValue = (totalRevenueCents / 100).toLocaleString(i18n.language, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+
   return (
     <div className="max-w-[1040px] mx-auto">
       <div className="flex items-center justify-between mb-1">
@@ -79,7 +94,7 @@ export default function DashboardPage() {
       )}
 
       {!isLoading && !error && tracks.length > 0 && (
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-3">
           <div className="bg-card border border-border/10 rounded-2xl p-4">
             <div className="font-mono text-xl font-bold">{tracks.length}</div>
             <div className="text-[11px] uppercase tracking-wide text-muted-foreground mt-0.5">
@@ -102,6 +117,40 @@ export default function DashboardPage() {
             <div className="font-mono text-xl font-bold">{officialCount}</div>
             <div className="text-[11px] uppercase tracking-wide text-muted-foreground mt-0.5">
               {t('dashboard.statOfficial')}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {!isLoading && !error && tracks.length > 0 && (
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+          <div className="bg-card border border-border/10 rounded-2xl p-4">
+            <div className="font-mono text-xl font-bold">{totalEnrolled}</div>
+            <div className="text-[11px] uppercase tracking-wide text-muted-foreground mt-0.5">
+              {t('dashboard.statEnrolled')}
+            </div>
+          </div>
+          <div className="bg-card border border-border/10 rounded-2xl p-4">
+            <div className="font-mono text-xl font-bold">{totalCompletions}</div>
+            <div className="text-[11px] uppercase tracking-wide text-muted-foreground mt-0.5">
+              {t('dashboard.statCompletions')}
+            </div>
+          </div>
+          <div className="bg-card border border-border/10 rounded-2xl p-4">
+            <div className="font-mono text-xl font-bold flex items-center gap-1">
+              {overallAverageRating != null ? overallAverageRating.toFixed(1) : '—'}
+              <Star size={15} className="text-amber-400 fill-amber-400" />
+            </div>
+            <div className="text-[11px] uppercase tracking-wide text-muted-foreground mt-0.5">
+              {t('dashboard.statAvgRating')}
+            </div>
+          </div>
+          <div className="bg-card border border-border/10 rounded-2xl p-4">
+            <div className="font-mono text-xl font-bold">
+              {currencyPrefix} {totalRevenueValue}
+            </div>
+            <div className="text-[11px] uppercase tracking-wide text-muted-foreground mt-0.5">
+              {t('dashboard.statRevenue')}
             </div>
           </div>
         </div>
@@ -144,12 +193,56 @@ export default function DashboardPage() {
               {track.ownerName}
             </div>
 
+            <div className="grid grid-cols-4 gap-2 py-2 border-y border-border/10">
+              <div className="text-center">
+                <div className="font-mono text-sm font-bold">{track.enrolledCount}</div>
+                <div className="text-[9px] uppercase tracking-wide text-muted-foreground">
+                  {t('dashboard.cardEnrolled')}
+                </div>
+              </div>
+              <div className="text-center">
+                <div className="font-mono text-sm font-bold">{track.completionRate.toFixed(0)}%</div>
+                <div className="text-[9px] uppercase tracking-wide text-muted-foreground">
+                  {t('dashboard.cardCompletion')}
+                </div>
+              </div>
+              <div className="text-center">
+                <div className="font-mono text-sm font-bold flex items-center justify-center gap-0.5">
+                  {track.averageRating != null ? (
+                    <>
+                      {track.averageRating.toFixed(1)}
+                      <Star size={11} className="text-amber-400 fill-amber-400" />
+                    </>
+                  ) : (
+                    '—'
+                  )}
+                </div>
+                <div className="text-[9px] uppercase tracking-wide text-muted-foreground">
+                  {t('dashboard.cardRating')}
+                </div>
+              </div>
+              <div className="text-center">
+                <div className="font-mono text-sm font-bold">
+                  {track.paid ? `${currencyPrefix} ${(track.estimatedRevenueCents / 100).toFixed(0)}` : '—'}
+                </div>
+                <div className="text-[9px] uppercase tracking-wide text-muted-foreground">
+                  {t('dashboard.cardRevenue')}
+                </div>
+              </div>
+            </div>
+
             <div className="flex items-center gap-2 mt-auto pt-1.5">
               <Link
                 to={`/tracks/${track.id}`}
                 className="text-sm border border-border/10 rounded-lg px-3 py-1.5"
               >
                 {t('dashboard.open')}
+              </Link>
+              <Link
+                to={`/tracks/${track.id}/analytics`}
+                className="text-sm border border-border/10 rounded-lg px-3 py-1.5"
+              >
+                {t('dashboard.viewAnalytics')}
               </Link>
               <Link
                 to={`/tracks/${track.id}/edit`}
