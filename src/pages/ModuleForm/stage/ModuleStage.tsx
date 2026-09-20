@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { LessonStep, StepKind } from '../../../types/lessonStep';
-import { createStep } from '../stepDefaults';
+import { createStep, stepKindOf } from '../stepDefaults';
 import { EditToolbar } from './EditToolbar';
 import { WebStepEditor } from './WebStepEditor';
 import { PhoneStage } from './PhoneStage';
@@ -99,7 +99,7 @@ export function ModuleStage({
     );
   }
 
-  const kind: StepKind = currentStep.type === 'THEORY' ? 'THEORY' : (currentStep.exerciseType ?? 'MULTIPLE_CHOICE');
+  const kind: StepKind = stepKindOf(currentStep);
 
   return (
     <div className="flex flex-col gap-4">

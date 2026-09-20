@@ -76,6 +76,11 @@ export default function ModuleFormPage() {
   }, [trackId, sectionId, moduleId, isEditing, isCreatingTestModule, t]);
 
   async function handleSave() {
+    if (!title.trim()) {
+      setError(t('moduleForm.errorTitleRequired'));
+      return;
+    }
+
     setError(null);
     setIsSubmitting(true);
 

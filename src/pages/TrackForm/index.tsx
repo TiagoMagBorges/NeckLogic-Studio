@@ -16,7 +16,7 @@ export default function TrackFormPage() {
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [published, setPublished] = useState(false);
+  const [published, setPublished] = useState(true);
   const [paid, setPaid] = useState(false);
   const [priceReais, setPriceReais] = useState('');
   const [isOfficial, setIsOfficial] = useState(false);
@@ -82,6 +82,7 @@ export default function TrackFormPage() {
         const response = await api.post<{ id: number }>('/tracks', {
           title,
           description,
+          published,
           paid,
           priceCents,
         });
@@ -176,15 +177,13 @@ export default function TrackFormPage() {
               {t('trackForm.sectionSettings')}
             </h2>
 
-            {isEditing && (
-              <div className="flex items-center justify-between gap-3 py-3 border-b border-border/10">
-                <div>
-                  <div className="text-sm font-semibold">{t('trackForm.fieldPublished')}</div>
-                  <div className="text-xs text-muted-foreground">{t('trackForm.fieldPublishedHint')}</div>
-                </div>
-                <Switch checked={published} onChange={setPublished} label={t('trackForm.fieldPublished')} />
+            <div className="flex items-center justify-between gap-3 py-3 border-b border-border/10">
+              <div>
+                <div className="text-sm font-semibold">{t('trackForm.fieldPublished')}</div>
+                <div className="text-xs text-muted-foreground">{t('trackForm.fieldPublishedHint')}</div>
               </div>
-            )}
+              <Switch checked={published} onChange={setPublished} label={t('trackForm.fieldPublished')} />
+            </div>
 
             <div className="flex items-center justify-between gap-3 py-3 border-b border-border/10">
               <div>

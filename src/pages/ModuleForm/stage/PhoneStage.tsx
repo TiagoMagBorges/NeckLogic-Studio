@@ -4,8 +4,8 @@ import { X, Volume2 } from 'lucide-react';
 import type { LessonStep, StepKind, TheoryAudioSequence } from '../../../types/lessonStep';
 import { stepLabel } from '../stepDefaults';
 import { playSequence } from '../../../core/AudioEngine';
-import { TheoryIllustrationView } from './TheoryIllustrationView';
-import { ExercisePreview } from './ExercisePreview';
+import { TheoryIllustrationView } from './preview/TheoryIllustrationView';
+import { ExercisePreview } from './preview/ExercisePreview';
 
 interface PhoneStageProps {
   step: LessonStep;

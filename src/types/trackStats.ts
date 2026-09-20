@@ -1,11 +1,14 @@
-export interface Track {
+export interface TrackRatingEntry {
   id: number;
+  stars: number;
+  comment: string | null;
+  userName: string;
+  createdAt: string;
+}
+
+export interface TrackStats {
+  trackId: number;
   title: string;
-  description: string | null;
-  ownerName: string;
-  official: boolean;
-  published: boolean;
-  approved: boolean;
   paid: boolean;
   priceCents: number | null;
   enrolledCount: number;
@@ -14,4 +17,5 @@ export interface Track {
   averageRating: number | null;
   ratingCount: number;
   estimatedRevenueCents: number;
+  ratings: TrackRatingEntry[];
 }

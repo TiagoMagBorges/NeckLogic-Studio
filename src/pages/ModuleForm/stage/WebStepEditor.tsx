@@ -1,10 +1,10 @@
 import { useTranslation } from 'react-i18next';
 import { Image as ImageIcon } from 'lucide-react';
 import type { LessonStep, StepKind } from '../../../types/lessonStep';
-import { stepLabel } from '../stepDefaults';
+import { stepLabel, SEQUENCE_KINDS } from '../stepDefaults';
 import { inputClass, labelClass } from '../stepEditorStyles';
-import { TheoryIllustrationBuilder } from './TheoryIllustrationBuilder';
-import { AudioSequenceBuilder } from './AudioSequenceBuilder';
+import { TheoryIllustrationBuilder } from './builders/TheoryIllustrationBuilder';
+import { AudioSequenceBuilder } from './builders/AudioSequenceBuilder';
 import { MultipleChoiceFields } from './fields/MultipleChoiceFields';
 import { ChordFields } from './fields/ChordFields';
 import { CircleOfFifthsFields } from './fields/CircleOfFifthsFields';
@@ -13,8 +13,6 @@ import { ShapeMatchFields } from './fields/ShapeMatchFields';
 import { FindAllOccurrencesFields } from './fields/FindAllOccurrencesFields';
 import { SequenceFields } from './fields/SequenceFields';
 import { StaffReadingFields } from './fields/StaffReadingFields';
-
-const SEQUENCE_KINDS: StepKind[] = ['SCALE_DEGREES', 'ARPEGGIO', 'TAB_READING'];
 
 interface WebStepEditorProps {
   step: LessonStep;

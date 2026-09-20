@@ -1,12 +1,11 @@
 import { useTranslation } from 'react-i18next';
-import type { LessonStep, StepKind, FretPosition, StaffNoteEntry } from '../../../types/lessonStep';
-import { PlayerFretboard } from './PlayerFretboard';
-import { PlayerCircleOfFifths } from './PlayerCircleOfFifths';
-import { PlayerHarmonicField } from './PlayerHarmonicField';
-import { PlayerStaffDisplay } from './PlayerStaffDisplay';
-import { computeChordPreviewNotes } from './chordPreview';
-
-const SEQUENCE_KINDS: StepKind[] = ['SCALE_DEGREES', 'ARPEGGIO', 'TAB_READING'];
+import type { LessonStep, StepKind, FretPosition, StaffNoteEntry } from '../../../../types/lessonStep';
+import { PlayerFretboard } from '../players/PlayerFretboard';
+import { PlayerCircleOfFifths } from '../players/PlayerCircleOfFifths';
+import { PlayerHarmonicField } from '../players/PlayerHarmonicField';
+import { PlayerStaffDisplay } from '../players/PlayerStaffDisplay';
+import { computeChordPreviewNotes } from '../utils/chordPreview';
+import { SEQUENCE_KINDS } from '../../stepDefaults';
 
 interface ExercisePreviewProps {
   step: LessonStep;

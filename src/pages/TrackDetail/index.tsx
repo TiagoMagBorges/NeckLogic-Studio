@@ -97,12 +97,20 @@ export default function TrackDetailPage() {
 
       <div className="flex items-center justify-between mb-1">
         <h1 className="font-serif text-2xl font-bold">{track.title}</h1>
-        <Link
-          to={`/tracks/${trackId}/sections/new`}
-          className="py-2 px-4 rounded-xl font-bold text-sm text-primary-foreground bg-primary"
-        >
-          {t('trackDetail.newSection')}
-        </Link>
+        <div className="flex gap-3">
+          <Link
+            to={`/tracks/${trackId}/analytics`}
+            className="py-2 px-4 rounded-xl font-medium text-sm border border-border/10 text-foreground"
+          >
+            {t('dashboard.viewAnalytics')}
+          </Link>
+          <Link
+            to={`/tracks/${trackId}/sections/new`}
+            className="py-2 px-4 rounded-xl font-bold text-sm text-primary-foreground bg-primary"
+          >
+            {t('trackDetail.newSection')}
+          </Link>
+        </div>
       </div>
       {track.description && <p className="text-muted-foreground mt-1 mb-6">{track.description}</p>}
 

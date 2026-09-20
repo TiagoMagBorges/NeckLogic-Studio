@@ -1,9 +1,9 @@
-import type { TheoryIllustration } from '../../../types/lessonStep';
-import { noteFromStringAndFret } from '../../../core/musicTheory';
-import { PlayerFretboard } from './PlayerFretboard';
-import { PlayerCircleOfFifths } from './PlayerCircleOfFifths';
-import { PlayerHarmonicField } from './PlayerHarmonicField';
-import { PlayerStaffDisplay } from './PlayerStaffDisplay';
+import type { TheoryIllustration } from '../../../../types/lessonStep';
+import { noteFromStringAndFret } from '../../../../core/musicTheory';
+import { PlayerFretboard } from '../players/PlayerFretboard';
+import { PlayerCircleOfFifths } from '../players/PlayerCircleOfFifths';
+import { PlayerHarmonicField } from '../players/PlayerHarmonicField';
+import { PlayerStaffDisplay } from '../players/PlayerStaffDisplay';
 
 interface TheoryIllustrationViewProps {
   illustration: TheoryIllustration;

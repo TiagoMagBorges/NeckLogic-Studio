@@ -4,8 +4,8 @@ import type { LessonStep, FretPosition } from '../../../../types/lessonStep';
 import { noteWithOctaveFromStringAndFret } from '../../../../core/musicTheory';
 import { playNote } from '../../../../core/AudioEngine';
 import { labelClass } from '../../stepEditorStyles';
-import { PlayerFretboard } from '../PlayerFretboard';
-import { positionKey } from '../positionKey';
+import { PlayerFretboard } from '../players/PlayerFretboard';
+import { positionKey } from '../utils/positionKey';
 
 interface SequenceFieldsProps {
   step: LessonStep;

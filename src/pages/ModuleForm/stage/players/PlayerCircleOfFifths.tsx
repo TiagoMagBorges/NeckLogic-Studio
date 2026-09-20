@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
-import { CIRCLE_OF_FIFTHS } from '../../../core/musicTheory';
+import { CIRCLE_OF_FIFTHS } from '../../../../core/musicTheory';
+import { PLAYER_COLORS } from './playerTheme';
 
 interface PlayerCircleOfFifthsProps {
   size?: number;
@@ -26,8 +27,8 @@ export function PlayerCircleOfFifths({ size = 240, selectedKeys, onToggleKey }: 
     <svg width={size} height={size}>
       {keyPositions.map(({ note, x, y }) => {
         const isSelected = selectedKeys.includes(note);
-        const fill = isSelected ? '#00D9FF' : '#18181B';
-        const stroke = isSelected ? '#00D9FF' : '#3F3F46';
+        const fill = isSelected ? PLAYER_COLORS.accent : PLAYER_COLORS.background;
+        const stroke = isSelected ? PLAYER_COLORS.accent : '#3F3F46';
         const text = isSelected ? '#09090B' : '#FFFFFF';
         return (
           <g

@@ -1,5 +1,5 @@
-import { getChordNotes, noteFromStringAndFret } from '../../../core/musicTheory';
-import type { FretboardNote } from './PlayerFretboard';
+import { getChordNotes, noteFromStringAndFret } from '../../../../core/musicTheory';
+import type { FretboardNote } from '../players/PlayerFretboard';
 
 const PREVIEW_FRETS = 5;
 

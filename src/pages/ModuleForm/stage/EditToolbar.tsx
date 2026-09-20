@@ -1,12 +1,10 @@
 import { useTranslation } from 'react-i18next';
 import { Smartphone } from 'lucide-react';
 import type { StepKind } from '../../../types/lessonStep';
-import { SIMPLE_STEP_KINDS, ADVANCED_STEP_KINDS, stepLabel } from '../stepDefaults';
+import { STEP_KINDS, stepLabel } from '../stepDefaults';
+import { compactInputClass } from '../stepEditorStyles';
 
-const inputClass =
-  'bg-input-background border border-border/10 rounded-lg px-2 py-1.5 text-foreground text-xs focus:outline-none focus:border-primary';
-
-const numericInputClass = `${inputClass} font-mono`;
+const numericInputClass = `${compactInputClass} font-mono`;
 
 interface EditToolbarProps {
   moduleTitle: string;
@@ -42,7 +40,9 @@ export function EditToolbar({
         value={moduleTitle}
         onChange={(event) => onModuleTitleChange(event.target.value)}
         title={t('stage.moduleTitleLabel')}
-        className={`${inputClass} flex-1 min-w-[160px]`}
+        placeholder={t('stage.moduleTitleLabel')}
+        required
+        className={`${compactInputClass} flex-1 min-w-[160px]`}
       />
       <div className="flex flex-col gap-0.5">
         <span className="text-[9px] uppercase tracking-wide text-muted-foreground">{t('stage.orderLabel')}</span>
@@ -66,22 +66,13 @@ export function EditToolbar({
       <select
         value={stepKind}
         onChange={(event) => onStepKindChange(event.target.value as StepKind)}
-        className={`${inputClass} min-w-[180px]`}
+        className={`${compactInputClass} min-w-[180px]`}
       >
-        <optgroup label={t('moduleForm.stepEditor.groupSimple')}>
-          {SIMPLE_STEP_KINDS.map((kind) => (
-            <option key={kind} value={kind}>
-              {stepLabel(kind)}
-            </option>
-          ))}
-        </optgroup>
-        <optgroup label={t('moduleForm.stepEditor.groupAdvanced')}>
-          {ADVANCED_STEP_KINDS.map((kind) => (
-            <option key={kind} value={kind}>
-              {stepLabel(kind)}
-            </option>
-          ))}
-        </optgroup>
+        {STEP_KINDS.map((kind) => (
+          <option key={kind} value={kind}>
+            {stepLabel(kind)}
+          </option>
+        ))}
       </select>
 
       <button

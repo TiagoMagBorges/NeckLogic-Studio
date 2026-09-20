@@ -1,4 +1,5 @@
 import { Fragment } from 'react';
+import { PLAYER_COLORS } from './playerTheme';
 
 export interface FretboardNote {
   string: number;
@@ -22,14 +23,14 @@ const FRET_BOTTOM = SVG_HEIGHT - 40;
 const MARKER_RADIUS = 14;
 const FONT_SIZE = 14;
 
-const BG_COLOR = '#18181B';
+const BG_COLOR = PLAYER_COLORS.background;
 const INLAY_COLOR = '#3F3F46';
 const NUT_COLOR = '#D4D4D8';
-const FRET_LINE_COLOR = '#52525B';
-const STRING_COLOR = '#A1A1AA';
-const FRET_NUMBER_COLOR = '#71717A';
+const FRET_LINE_COLOR = PLAYER_COLORS.border;
+const STRING_COLOR = PLAYER_COLORS.line;
+const FRET_NUMBER_COLOR = PLAYER_COLORS.muted;
 const NOTE_TEXT_COLOR = '#09090B';
-const DEFAULT_NOTE_COLOR = '#00D9FF';
+const DEFAULT_NOTE_COLOR = PLAYER_COLORS.accent;
 
 const SINGLE_INLAYS = [3, 5, 7, 9, 15, 17, 19, 21];
 const DOUBLE_INLAYS = [12, 24];

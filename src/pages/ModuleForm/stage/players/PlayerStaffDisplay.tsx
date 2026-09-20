@@ -1,23 +1,26 @@
 import { Fragment, useMemo } from 'react';
-import type { ClefType, NoteDuration, StaffNoteEntry } from '../../../types/lessonStep';
-import { getStaffStep, getDurationBeats, parseNoteWithOctave } from '../../../core/musicTheory';
+import type { MouseEvent } from 'react';
+import type { ClefType, NoteDuration, StaffNoteEntry } from '../../../../types/lessonStep';
+import { getStaffStep, getDurationBeats, parseNoteWithOctave } from '../../../../core/musicTheory';
+import { PLAYER_COLORS } from './playerTheme';
 
 interface PlayerStaffDisplayProps {
   notes: StaffNoteEntry[];
   clef?: ClefType;
   beatsPerMeasure?: number;
+  onStaffClick?: (step: number) => void;
 }
 
 const STEP_HEIGHT = 7;
-const BEAT_WIDTH = 48;
-const NOTE_INSET = 14;
+const BEAT_WIDTH = 68;
+const NOTE_INSET = 20;
 const LEFT_MARGIN = 48;
 const RIGHT_PADDING = 24;
 const TOP_MARGIN = 44;
 const STEM_LENGTH = 30;
-const NOTE_COLOR = '#00D9FF';
-const LINE_COLOR = '#71717A';
-const BARLINE_COLOR = '#52525B';
+const NOTE_COLOR = PLAYER_COLORS.accent;
+const LINE_COLOR = PLAYER_COLORS.muted;
+const BARLINE_COLOR = PLAYER_COLORS.border;
 
 const CLEF_CONFIG: Record<ClefType, { glyph: string; fontSize: number; yOffsetSteps: number; label: string }> = {
   treble: { glyph: '𝄞', fontSize: 26, yOffsetSteps: 3, label: 'Clave de Sol' },
@@ -96,10 +99,19 @@ function RestGlyph({ x, y, duration }: { x: number; y: number; duration: NoteDur
   }
 }
 
-export function PlayerStaffDisplay({ notes, clef = 'treble', beatsPerMeasure = 4 }: PlayerStaffDisplayProps) {
+export function PlayerStaffDisplay({ notes, clef = 'treble', beatsPerMeasure = 4, onStaffClick }: PlayerStaffDisplayProps) {
   const baseY = TOP_MARGIN + 8 * STEP_HEIGHT;
   const height = baseY + TOP_MARGIN;
   const clefConfig = CLEF_CONFIG[clef];
+
+  function handleClick(event: MouseEvent<SVGRectElement>) {
+    if (!onStaffClick) return;
+    const rect = event.currentTarget.ownerSVGElement?.getBoundingClientRect();
+    if (!rect) return;
+    const y = event.clientY - rect.top;
+    const step = Math.round((baseY - y) / STEP_HEIGHT);
+    onStaffClick(step);
+  }
 
   const entries = useMemo(() => notes.map((entry) => ({ ...entry, beats: getDurationBeats(entry.duration, entry.dotted) })), [notes]);
 
@@ -128,8 +140,20 @@ export function PlayerStaffDisplay({ notes, clef = 'treble', beatsPerMeasure = 4
   });
 
   return (
-    <div className="overflow-x-auto rounded-xl" style={{ background: '#18181B' }}>
+    <div className="overflow-x-auto rounded-xl" style={{ background: PLAYER_COLORS.background }}>
       <svg width={width} height={height} style={{ display: 'block' }}>
+        {onStaffClick && (
+          <rect
+            x={0}
+            y={0}
+            width={width}
+            height={height}
+            fill="transparent"
+            style={{ cursor: 'crosshair' }}
+            onClick={handleClick}
+          />
+        )}
+
         {[0, 2, 4, 6, 8].map((step) => (
           <line
             key={`line-${step}`}
@@ -154,7 +178,7 @@ export function PlayerStaffDisplay({ notes, clef = 'treble', beatsPerMeasure = 4
           />
         ))}
 
-        <text x={LEFT_MARGIN - 30} y={baseY - clefConfig.yOffsetSteps * STEP_HEIGHT} fontSize={clefConfig.fontSize} fill="#A1A1AA">
+        <text x={LEFT_MARGIN - 30} y={baseY - clefConfig.yOffsetSteps * STEP_HEIGHT} fontSize={clefConfig.fontSize} fill={PLAYER_COLORS.line}>
           {clefConfig.glyph}
         </text>
 
