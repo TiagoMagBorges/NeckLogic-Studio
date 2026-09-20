@@ -4,9 +4,9 @@ import type { LessonStep } from '../../../../types/lessonStep';
 import { CHROMATIC_SCALE, CHORD_QUALITY_KEYS, noteWithOctaveFromStringAndFret } from '../../../../core/musicTheory';
 import { playNote } from '../../../../core/AudioEngine';
 import { inputClass, labelClass } from '../../stepEditorStyles';
-import { PlayerFretboard } from '../PlayerFretboard';
-import { computeChordPreviewNotes } from '../chordPreview';
-import type { FretboardNote } from '../PlayerFretboard';
+import { PlayerFretboard } from '../players/PlayerFretboard';
+import { computeChordPreviewNotes } from '../utils/chordPreview';
+import type { FretboardNote } from '../players/PlayerFretboard';
 
 interface ChordFieldsProps {
   step: LessonStep;

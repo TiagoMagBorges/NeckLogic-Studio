@@ -171,10 +171,18 @@ export default function DashboardPage() {
                 )}
                 <span
                   className={`text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full ${
-                    track.published ? 'bg-emerald-500/20 text-emerald-300' : 'bg-secondary text-muted-foreground'
+                    !track.published
+                      ? 'bg-secondary text-muted-foreground'
+                      : track.official || track.approved
+                        ? 'bg-emerald-500/20 text-emerald-300'
+                        : 'bg-amber-500/20 text-amber-300'
                   }`}
                 >
-                  {track.published ? t('dashboard.published') : t('dashboard.draft')}
+                  {!track.published
+                    ? t('dashboard.draft')
+                    : track.official || track.approved
+                      ? t('dashboard.published')
+                      : t('dashboard.pendingApproval')}
                 </span>
                 <span
                   className={`text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full ${

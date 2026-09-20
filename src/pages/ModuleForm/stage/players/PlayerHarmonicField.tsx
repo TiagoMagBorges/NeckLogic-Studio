@@ -1,8 +1,9 @@
 import { useMemo } from 'react';
-import { getHarmonicField } from '../../../core/musicTheory';
+import { getHarmonicField } from '../../../../core/musicTheory';
+import { PLAYER_COLORS } from './playerTheme';
 
 const FUNCTION_COLORS: Record<string, string> = {
-  major: '#00D9FF',
+  major: PLAYER_COLORS.accent,
   minor: '#A855F7',
   dim: '#F59E0B',
 };
@@ -36,8 +37,8 @@ export function PlayerHarmonicField({ size = 240, rootKey, mode, selectedDegrees
     <svg width={size} height={size}>
       {chordPositions.map(({ chord, x, y }) => {
         const isSelected = selectedDegrees.includes(chord.degree);
-        const fill = isSelected ? '#00D9FF' : FUNCTION_COLORS[chord.quality] ?? '#27272A';
-        const stroke = isSelected ? '#00D9FF' : fill;
+        const fill = isSelected ? PLAYER_COLORS.accent : FUNCTION_COLORS[chord.quality] ?? '#27272A';
+        const stroke = isSelected ? PLAYER_COLORS.accent : fill;
         const text = '#09090B';
         return (
           <g

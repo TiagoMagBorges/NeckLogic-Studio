@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Home, ChevronsLeft, ChevronsRight } from 'lucide-react';
+import { Home, ChevronsLeft, ChevronsRight, ShieldCheck } from 'lucide-react';
 import { AccountMenu } from './AccountMenu';
+import { useAuth } from '../hooks/useAuth';
 
 const COLLAPSE_STORAGE_KEY = 'necklogic_studio_sidebar_collapsed';
 
@@ -16,6 +17,7 @@ function loadCollapsed(): boolean {
 
 export function Sidebar() {
   const { t } = useTranslation();
+  const { user } = useAuth();
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(loadCollapsed);
 
@@ -65,6 +67,21 @@ export function Sidebar() {
         <Home size={17} className="shrink-0" />
         {!collapsed && <span className="truncate">{t('sidebar.dashboard')}</span>}
       </Link>
+
+      {user?.isAdmin && (
+        <Link
+          to="/admin/approvals"
+          title={collapsed ? t('sidebar.pendingApprovals') : undefined}
+          className={`flex items-center gap-2.5 px-2.5 py-2.5 rounded-xl text-[13.5px] font-semibold ${
+            location.pathname === '/admin/approvals'
+              ? 'bg-primary/10 text-primary'
+              : 'text-muted-foreground hover:bg-secondary/60 hover:text-foreground'
+          }`}
+        >
+          <ShieldCheck size={17} className="shrink-0" />
+          {!collapsed && <span className="truncate">{t('sidebar.pendingApprovals')}</span>}
+        </Link>
+      )}
 
       <div className="flex-1" />
 

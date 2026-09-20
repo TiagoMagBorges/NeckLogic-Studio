@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import type { LessonStep } from '../../../../types/lessonStep';
-import { PlayerCircleOfFifths } from '../PlayerCircleOfFifths';
+import { PlayerCircleOfFifths } from '../players/PlayerCircleOfFifths';
 
 interface CircleOfFifthsFieldsProps {
   step: LessonStep;

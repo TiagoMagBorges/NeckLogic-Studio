@@ -15,6 +15,7 @@ import TrackAnalyticsPage from '../pages/TrackAnalytics';
 import SectionFormPage from '../pages/SectionForm';
 import SectionModulesPage from '../pages/SectionModules';
 import ModuleFormPage from '../pages/ModuleForm';
+import PendingApprovalsPage from '../pages/PendingApprovals';
 
 export function AppRoutes() {
   return (
@@ -32,6 +33,7 @@ export function AppRoutes() {
               <Route path="/" element={<Navigate to="/dashboard" replace />} />
               <Route path="/dashboard" element={<DashboardPage />} />
               <Route path="/account" element={<AccountSettingsPage />} />
+              <Route path="/admin/approvals" element={<PendingApprovalsPage />} />
               <Route path="/tracks/new" element={<TrackFormPage />} />
               <Route path="/tracks/:id/edit" element={<TrackFormPage />} />
               <Route path="/tracks/:trackId" element={<TrackDetailPage />} />

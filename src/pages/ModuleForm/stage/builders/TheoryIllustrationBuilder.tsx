@@ -1,31 +1,15 @@
 import { useTranslation } from 'react-i18next';
-import { Plus, X } from 'lucide-react';
-import type {
-  LessonStep,
-  TheoryIllustration,
-  StaffNoteEntry,
-  NoteDuration,
-  ClefType,
-} from '../../../types/lessonStep';
-import {
-  CHROMATIC_SCALE,
-  NOTE_LETTERS,
-  ACCIDENTALS,
-  parseNoteWithOctave,
-  formatNoteWithOctave,
-  noteFromStringAndFret,
-} from '../../../core/musicTheory';
-import type { Accidental } from '../../../core/musicTheory';
-import { PlayerFretboard } from './PlayerFretboard';
-import { PlayerCircleOfFifths } from './PlayerCircleOfFifths';
-import { PlayerHarmonicField } from './PlayerHarmonicField';
-import { PlayerStaffDisplay } from './PlayerStaffDisplay';
-import { positionKey } from './positionKey';
+import type { LessonStep, TheoryIllustration, ClefType } from '../../../../types/lessonStep';
+import { CHROMATIC_SCALE, noteFromStringAndFret } from '../../../../core/musicTheory';
+import { PlayerFretboard } from '../players/PlayerFretboard';
+import { PlayerCircleOfFifths } from '../players/PlayerCircleOfFifths';
+import { PlayerHarmonicField } from '../players/PlayerHarmonicField';
+import { StaffNoteBuilder } from './StaffNoteBuilder';
+import { StaffNoteRows } from './StaffNoteRows';
+import { positionKey } from '../utils/positionKey';
+import { compactInputClass } from '../../stepEditorStyles';
 
 type IllustrationKind = TheoryIllustration['kind'];
-
-const inputClass =
-  'bg-input-background border border-border/10 rounded-lg px-2 py-1.5 text-foreground text-xs focus:outline-none focus:border-primary';
 
 function defaultIllustration(kind: IllustrationKind): TheoryIllustration {
   switch (kind) {
@@ -165,7 +149,7 @@ function HarmonicIllustrationEditor({
         <select
           value={illustration.key}
           onChange={(event) => onChange({ illustration: { ...illustration, key: event.target.value, highlightedDegrees: [] } })}
-          className={inputClass}
+          className={compactInputClass}
         >
           {CHROMATIC_SCALE.map((note) => (
             <option key={note} value={note}>
@@ -180,7 +164,7 @@ function HarmonicIllustrationEditor({
               illustration: { ...illustration, mode: event.target.value as 'major' | 'minor', highlightedDegrees: [] },
             })
           }
-          className={inputClass}
+          className={compactInputClass}
         >
           <option value="major">{t('moduleForm.stepEditor.modeMajor')}</option>
           <option value="minor">{t('moduleForm.stepEditor.modeMinor')}</option>
@@ -192,8 +176,6 @@ function HarmonicIllustrationEditor({
   );
 }
 
-const DURATIONS: NoteDuration[] = ['whole', 'half', 'quarter', 'eighth', 'sixteenth'];
-
 function StaffIllustrationEditor({
                                    illustration,
                                    onChange,
@@ -204,21 +186,6 @@ function StaffIllustrationEditor({
   const { t } = useTranslation();
   const notes = illustration.notes;
 
-  function updateEntry(index: number, patch: Partial<StaffNoteEntry>) {
-    const next = [...notes];
-    next[index] = { ...next[index], ...patch };
-    onChange({ illustration: { ...illustration, notes: next } });
-  }
-
-  function removeEntry(index: number) {
-    onChange({ illustration: { ...illustration, notes: notes.filter((_, i) => i !== index) } });
-  }
-
-  function addEntry(withNote: boolean) {
-    const entry: StaffNoteEntry = withNote ? { note: 'C4', duration: 'quarter' } : { duration: 'quarter' };
-    onChange({ illustration: { ...illustration, notes: [...notes, entry] } });
-  }
-
   return (
     <div className="flex flex-col gap-2">
       <p className="text-muted-foreground text-[11px]">{t('theoryIllustration.staffHint')}</p>
@@ -227,7 +194,7 @@ function StaffIllustrationEditor({
         <select
           value={illustration.clef}
           onChange={(event) => onChange({ illustration: { ...illustration, clef: event.target.value as ClefType } })}
-          className={inputClass}
+          className={compactInputClass}
         >
           <option value="treble">{t('moduleForm.stepEditor.clefTreble')}</option>
           <option value="bass">{t('moduleForm.stepEditor.clefBass')}</option>
@@ -237,106 +204,18 @@ function StaffIllustrationEditor({
           min="1"
           value={illustration.beatsPerMeasure}
           onChange={(event) => onChange({ illustration: { ...illustration, beatsPerMeasure: Number(event.target.value) } })}
-          className={`${inputClass} w-16`}
+          className={`${compactInputClass} w-16`}
         />
       </div>
 
-      {notes.length > 0 && <PlayerStaffDisplay notes={notes} clef={illustration.clef} beatsPerMeasure={illustration.beatsPerMeasure} />}
+      <StaffNoteBuilder
+        notes={notes}
+        clef={illustration.clef}
+        beatsPerMeasure={illustration.beatsPerMeasure}
+        onNotesChange={(next) => onChange({ illustration: { ...illustration, notes: next } })}
+      />
 
-      <div className="flex flex-col gap-1.5">
-        {notes.map((entry, index) => (
-          <StaffEntryRow key={index} entry={entry} onChange={(patch) => updateEntry(index, patch)} onRemove={() => removeEntry(index)} />
-        ))}
-      </div>
-
-      <div className="flex gap-2">
-        <button type="button" onClick={() => addEntry(true)} className="flex items-center gap-1 text-primary text-xs font-medium">
-          <Plus size={14} />
-          {t('moduleForm.stepEditor.addNote')}
-        </button>
-        <button type="button" onClick={() => addEntry(false)} className="flex items-center gap-1 text-primary text-xs font-medium">
-          <Plus size={14} />
-          {t('moduleForm.stepEditor.addRest')}
-        </button>
-      </div>
-    </div>
-  );
-}
-
-function StaffEntryRow({
-                         entry,
-                         onChange,
-                         onRemove,
-                       }: {
-  entry: StaffNoteEntry;
-  onChange: (patch: Partial<StaffNoteEntry>) => void;
-  onRemove: () => void;
-}) {
-  const { t } = useTranslation();
-  const isRest = !entry.note;
-  const parsed = parseNoteWithOctave(entry.note ?? 'C4');
-
-  function setNotePart(part: Partial<{ letter: string; accidental: Accidental; octave: number }>) {
-    const next = { ...parsed, ...part };
-    onChange({ note: formatNoteWithOctave(next.letter, next.accidental, next.octave) });
-  }
-
-  return (
-    <div className="flex items-center gap-2 flex-wrap bg-input-background border border-border/10 rounded-lg px-2 py-1.5">
-      <label className="flex items-center gap-1 text-[11px] text-muted-foreground">
-        <input type="checkbox" checked={isRest} onChange={() => onChange({ note: isRest ? 'C4' : undefined })} />
-        {t('moduleForm.stepEditor.isRest')}
-      </label>
-
-      {!isRest && (
-        <>
-          <select value={parsed.letter} onChange={(event) => setNotePart({ letter: event.target.value })} className={`${inputClass} w-14`}>
-            {NOTE_LETTERS.map((letter) => (
-              <option key={letter} value={letter}>
-                {letter}
-              </option>
-            ))}
-          </select>
-          <select
-            value={parsed.accidental}
-            onChange={(event) => setNotePart({ accidental: event.target.value as Accidental })}
-            className={`${inputClass} w-24`}
-          >
-            {ACCIDENTALS.map((accidental) => (
-              <option key={accidental} value={accidental}>
-                {t(`moduleForm.stepEditor.accidental${accidental.charAt(0).toUpperCase()}${accidental.slice(1)}`)}
-              </option>
-            ))}
-          </select>
-          <input
-            type="number"
-            value={parsed.octave}
-            onChange={(event) => setNotePart({ octave: Number(event.target.value) })}
-            className={`${inputClass} w-14`}
-          />
-        </>
-      )}
-
-      <select
-        value={entry.duration}
-        onChange={(event) => onChange({ duration: event.target.value as NoteDuration })}
-        className={`${inputClass} w-28`}
-      >
-        {DURATIONS.map((duration) => (
-          <option key={duration} value={duration}>
-            {t(`moduleForm.stepEditor.duration${duration.charAt(0).toUpperCase()}${duration.slice(1)}`)}
-          </option>
-        ))}
-      </select>
-
-      <label className="flex items-center gap-1 text-[11px] text-muted-foreground">
-        <input type="checkbox" checked={entry.dotted ?? false} onChange={(event) => onChange({ dotted: event.target.checked })} />
-        {t('moduleForm.stepEditor.dotted')}
-      </label>
-
-      <button type="button" onClick={onRemove} className="ml-auto p-1 rounded-lg border border-destructive/40 text-destructive">
-        <X size={12} />
-      </button>
+      <StaffNoteRows notes={notes} onNotesChange={(next) => onChange({ illustration: { ...illustration, notes: next } })} />
     </div>
   );
 }

@@ -5,6 +5,7 @@ export interface Track {
   ownerName: string;
   official: boolean;
   published: boolean;
+  approved: boolean;
   paid: boolean;
   priceCents: number | null;
   enrolledCount: number;

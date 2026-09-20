@@ -19,7 +19,7 @@ import {
   Plus,
 } from 'lucide-react';
 import type { LessonStep, StepKind } from '../../../types/lessonStep';
-import { stepLabel } from '../stepDefaults';
+import { stepLabel, stepKindOf } from '../stepDefaults';
 
 const STEP_ICONS: Record<StepKind, typeof BookOpen> = {
   THEORY: BookOpen,
@@ -35,10 +35,6 @@ const STEP_ICONS: Record<StepKind, typeof BookOpen> = {
   TAB_READING: FileText,
   STAFF_READING: Music4,
 };
-
-function kindOf(step: LessonStep): StepKind {
-  return step.type === 'THEORY' ? 'THEORY' : (step.exerciseType ?? 'MULTIPLE_CHOICE');
-}
 
 interface StepRailProps {
   steps: LessonStep[];
@@ -87,7 +83,7 @@ export function StepRail({ steps, currentIndex, onSelect, onAddStep, onRequestDe
       </span>
 
       {steps.map((step, index) => {
-        const kind = kindOf(step);
+        const kind = stepKindOf(step);
         const Icon = STEP_ICONS[kind];
         const isActive = index === currentIndex;
         const isDropTarget = overIndex === index && dragIndex !== null && dragIndex !== index;

@@ -1,5 +1,13 @@
 import i18n from '../../i18n';
-import type { LessonStep, StepKind } from '../../types/lessonStep';
+import type { LessonStep, StepKind, NoteDuration } from '../../types/lessonStep';
+
+export const DURATIONS: NoteDuration[] = ['whole', 'half', 'quarter', 'eighth', 'sixteenth'];
+
+export const SEQUENCE_KINDS: StepKind[] = ['SCALE_DEGREES', 'ARPEGGIO', 'TAB_READING'];
+
+export function stepKindOf(step: LessonStep): StepKind {
+  return step.type === 'THEORY' ? 'THEORY' : (step.exerciseType ?? 'MULTIPLE_CHOICE');
+}
 
 export const STEP_KINDS: StepKind[] = [
   'THEORY',

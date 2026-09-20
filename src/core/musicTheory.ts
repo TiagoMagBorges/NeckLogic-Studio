@@ -137,6 +137,16 @@ export function getStaffStep(noteWithOctave: string, clef: 'treble' | 'bass' = '
   return (octave - reference.octave) * 7 + (letterIndex - referenceIndex);
 }
 
+export function noteFromStaffStep(step: number, clef: 'treble' | 'bass' = 'treble'): string {
+  const reference = CLEF_BOTTOM_LINE_NOTE[clef];
+  const referenceIndex = NATURAL_NOTE_ORDER.indexOf(reference.letter);
+
+  const letterIndex = (((referenceIndex + step) % 7) + 7) % 7;
+  const octave = reference.octave + Math.floor((referenceIndex + step) / 7);
+
+  return `${NATURAL_NOTE_ORDER[letterIndex]}${octave}`;
+}
+
 const DURATION_BEATS: Record<string, number> = {
   whole: 4,
   half: 2,

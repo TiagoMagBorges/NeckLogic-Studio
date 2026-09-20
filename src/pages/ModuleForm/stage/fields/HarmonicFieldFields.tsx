@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import type { LessonStep } from '../../../../types/lessonStep';
 import { CHROMATIC_SCALE, HARMONIC_FIELD_DEGREES } from '../../../../core/musicTheory';
 import { inputClass, labelClass } from '../../stepEditorStyles';
-import { PlayerHarmonicField } from '../PlayerHarmonicField';
+import { PlayerHarmonicField } from '../players/PlayerHarmonicField';
 
 interface HarmonicFieldFieldsProps {
   step: LessonStep;
