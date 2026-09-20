@@ -4,6 +4,7 @@ import { PlayerFretboard } from '../players/PlayerFretboard';
 import { PlayerCircleOfFifths } from '../players/PlayerCircleOfFifths';
 import { PlayerHarmonicField } from '../players/PlayerHarmonicField';
 import { PlayerStaffDisplay } from '../players/PlayerStaffDisplay';
+import { PlayerTabDisplay } from '../players/PlayerTabDisplay';
 
 interface TheoryIllustrationViewProps {
   illustration: TheoryIllustration;
@@ -33,6 +34,10 @@ export function TheoryIllustrationView({ illustration }: TheoryIllustrationViewP
         <PlayerHarmonicField rootKey={illustration.key} mode={illustration.mode} selectedDegrees={illustration.highlightedDegrees} />
       </div>
     );
+  }
+
+  if (illustration.kind === 'tab') {
+    return <PlayerTabDisplay notes={illustration.notes} beatsPerMeasure={illustration.beatsPerMeasure} />;
   }
 
   return <PlayerStaffDisplay notes={illustration.notes} clef={illustration.clef} beatsPerMeasure={illustration.beatsPerMeasure} />;

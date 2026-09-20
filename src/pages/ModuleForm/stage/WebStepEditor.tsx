@@ -13,6 +13,7 @@ import { ShapeMatchFields } from './fields/ShapeMatchFields';
 import { FindAllOccurrencesFields } from './fields/FindAllOccurrencesFields';
 import { SequenceFields } from './fields/SequenceFields';
 import { StaffReadingFields } from './fields/StaffReadingFields';
+import { TabReadingFields } from './fields/TabReadingFields';
 
 interface WebStepEditorProps {
   step: LessonStep;
@@ -102,7 +103,7 @@ function ExerciseStepFields({
 
   return (
     <>
-      {kind !== 'STAFF_READING' && (
+      {kind !== 'STAFF_READING' && kind !== 'TAB_READING' && (
         <div className="flex flex-col gap-1">
           <label className={labelClass}>{t('moduleForm.stepEditor.fieldQuestion')}</label>
           <input
@@ -122,6 +123,7 @@ function ExerciseStepFields({
       {kind === 'SHAPE_MATCH' && <ShapeMatchFields step={step} onChange={onStepChange} />}
       {kind === 'FIND_ALL_OCCURRENCES' && <FindAllOccurrencesFields step={step} onChange={onStepChange} />}
       {SEQUENCE_KINDS.includes(kind) && <SequenceFields step={step} onChange={onStepChange} />}
+      {kind === 'TAB_READING' && <TabReadingFields step={step} onChange={onStepChange} />}
       {kind === 'STAFF_READING' && <StaffReadingFields step={step} onChange={onStepChange} />}
     </>
   );

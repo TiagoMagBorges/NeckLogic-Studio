@@ -3,7 +3,7 @@ import type { LessonStep, StepKind, NoteDuration } from '../../types/lessonStep'
 
 export const DURATIONS: NoteDuration[] = ['whole', 'half', 'quarter', 'eighth', 'sixteenth'];
 
-export const SEQUENCE_KINDS: StepKind[] = ['SCALE_DEGREES', 'ARPEGGIO', 'TAB_READING'];
+export const SEQUENCE_KINDS: StepKind[] = ['SCALE_DEGREES', 'ARPEGGIO'];
 
 export function stepKindOf(step: LessonStep): StepKind {
   return step.type === 'THEORY' ? 'THEORY' : (step.exerciseType ?? 'MULTIPLE_CHOICE');
@@ -52,8 +52,9 @@ export function createStep(kind: StepKind): LessonStep {
       return { ...base, targetNote: 'C' };
     case 'SCALE_DEGREES':
     case 'ARPEGGIO':
-    case 'TAB_READING':
       return { ...base, targetSequence: [] };
+    case 'TAB_READING':
+      return { ...base, tabNotes: [], beatsPerMeasure: 4 };
     case 'STAFF_READING':
       return { ...base, staffNotes: [] };
     default:

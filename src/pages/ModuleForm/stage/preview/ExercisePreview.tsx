@@ -1,9 +1,10 @@
 import { useTranslation } from 'react-i18next';
-import type { LessonStep, StepKind, FretPosition, StaffNoteEntry } from '../../../../types/lessonStep';
+import type { LessonStep, StepKind, FretPosition, StaffNoteEntry, TabNoteEntry } from '../../../../types/lessonStep';
 import { PlayerFretboard } from '../players/PlayerFretboard';
 import { PlayerCircleOfFifths } from '../players/PlayerCircleOfFifths';
 import { PlayerHarmonicField } from '../players/PlayerHarmonicField';
 import { PlayerStaffDisplay } from '../players/PlayerStaffDisplay';
+import { PlayerTabDisplay } from '../players/PlayerTabDisplay';
 import { computeChordPreviewNotes } from '../utils/chordPreview';
 import { SEQUENCE_KINDS } from '../../stepDefaults';
 
@@ -43,6 +44,7 @@ export function ExercisePreview({ step, kind }: ExercisePreviewProps) {
         </p>
       )}
       {SEQUENCE_KINDS.includes(kind) && <SequencePreview sequence={(step.targetSequence as FretPosition[]) ?? []} />}
+      {kind === 'TAB_READING' && <TabPreview step={step} />}
       {kind === 'STAFF_READING' && <StaffPreview step={step} />}
     </div>
   );
@@ -126,4 +128,10 @@ function StaffPreview({ step }: { step: LessonStep }) {
   const notes = (step.staffNotes as StaffNoteEntry[]) ?? [];
   if (notes.length === 0) return null;
   return <PlayerStaffDisplay notes={notes} clef={step.clef as 'treble' | 'bass'} beatsPerMeasure={step.beatsPerMeasure as number} />;
+}
+
+function TabPreview({ step }: { step: LessonStep }) {
+  const notes = (step.tabNotes as TabNoteEntry[]) ?? [];
+  if (notes.length === 0) return null;
+  return <PlayerTabDisplay notes={notes} beatsPerMeasure={step.beatsPerMeasure as number} />;
 }

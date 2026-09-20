@@ -33,6 +33,13 @@ export interface StaffNoteEntry {
   target?: FretPosition;
 }
 
+export interface TabNoteEntry {
+  string?: number;
+  fret?: number;
+  duration: NoteDuration;
+  dotted?: boolean;
+}
+
 export interface TheoryFretboardIllustration {
   kind: 'fretboard';
   notes: FretPosition[];
@@ -57,11 +64,18 @@ export interface TheoryStaffIllustration {
   notes: StaffNoteEntry[];
 }
 
+export interface TheoryTabIllustration {
+  kind: 'tab';
+  beatsPerMeasure: number;
+  notes: TabNoteEntry[];
+}
+
 export type TheoryIllustration =
   | TheoryFretboardIllustration
   | TheoryCircleIllustration
   | TheoryHarmonicFieldIllustration
-  | TheoryStaffIllustration;
+  | TheoryStaffIllustration
+  | TheoryTabIllustration;
 
 export interface TheoryAudioSequence {
   sequence: StaffNoteEntry[];
