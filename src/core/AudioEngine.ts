@@ -1,5 +1,5 @@
-import { getAbsoluteSemitone, getDurationBeats } from './musicTheory';
-import type { StaffNoteEntry } from '../types/lessonStep';
+import { getAbsoluteSemitone, getDurationBeats, noteWithOctaveFromStringAndFret } from './musicTheory';
+import type { StaffNoteEntry, TabNoteEntry } from '../types/lessonStep';
 
 const SAMPLE_KEY_TO_FILE: Record<string, string> = {
   E2: 'E2', F2: 'F2', 'F#2': 'Fs2', G2: 'G2', A2: 'A2', 'A#2': 'As2', B2: 'B2',
@@ -44,6 +44,22 @@ export function playSequence(sequence: StaffNoteEntry[], tempo: number = 100) {
 
     if (entry.note) {
       const noteAtTime = entry.note;
+      setTimeout(() => playNote(noteAtTime), elapsed);
+    }
+
+    elapsed += beats * msPerBeat;
+  });
+}
+
+export function playTabSequence(sequence: TabNoteEntry[], tempo: number = 100) {
+  const msPerBeat = 60000 / tempo;
+  let elapsed = 0;
+
+  sequence.forEach((entry) => {
+    const beats = getDurationBeats(entry.duration, entry.dotted);
+
+    if (entry.string !== undefined && entry.fret !== undefined) {
+      const noteAtTime = noteWithOctaveFromStringAndFret(entry.string, entry.fret);
       setTimeout(() => playNote(noteAtTime), elapsed);
     }
 

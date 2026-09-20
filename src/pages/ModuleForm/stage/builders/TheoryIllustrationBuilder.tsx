@@ -6,6 +6,8 @@ import { PlayerCircleOfFifths } from '../players/PlayerCircleOfFifths';
 import { PlayerHarmonicField } from '../players/PlayerHarmonicField';
 import { StaffNoteBuilder } from './StaffNoteBuilder';
 import { StaffNoteRows } from './StaffNoteRows';
+import { TabNoteBuilder } from './TabNoteBuilder';
+import { TabNoteRows } from './TabNoteRows';
 import { positionKey } from '../utils/positionKey';
 import { compactInputClass } from '../../stepEditorStyles';
 
@@ -21,6 +23,8 @@ function defaultIllustration(kind: IllustrationKind): TheoryIllustration {
       return { kind, key: 'C', mode: 'major', highlightedDegrees: [] };
     case 'staff':
       return { kind, clef: 'treble', beatsPerMeasure: 4, notes: [] };
+    case 'tab':
+      return { kind, beatsPerMeasure: 4, notes: [] };
   }
 }
 
@@ -43,6 +47,7 @@ export function TheoryIllustrationBuilder({ step, onChange }: TheoryIllustration
     { value: 'circleOfFifths', label: t('theoryIllustration.kindCircle') },
     { value: 'harmonicField', label: t('theoryIllustration.kindHarmonic') },
     { value: 'staff', label: t('theoryIllustration.kindStaff') },
+    { value: 'tab', label: t('theoryIllustration.kindTab') },
   ];
 
   const activeKind: IllustrationKind | 'none' = illustration?.kind ?? 'none';
@@ -70,6 +75,7 @@ export function TheoryIllustrationBuilder({ step, onChange }: TheoryIllustration
       {illustration?.kind === 'circleOfFifths' && <CircleIllustrationEditor illustration={illustration} onChange={onChange} />}
       {illustration?.kind === 'harmonicField' && <HarmonicIllustrationEditor illustration={illustration} onChange={onChange} />}
       {illustration?.kind === 'staff' && <StaffIllustrationEditor illustration={illustration} onChange={onChange} />}
+      {illustration?.kind === 'tab' && <TabIllustrationEditor illustration={illustration} onChange={onChange} />}
     </div>
   );
 }
@@ -216,6 +222,42 @@ function StaffIllustrationEditor({
       />
 
       <StaffNoteRows notes={notes} onNotesChange={(next) => onChange({ illustration: { ...illustration, notes: next } })} />
+    </div>
+  );
+}
+
+function TabIllustrationEditor({
+                                 illustration,
+                                 onChange,
+                               }: {
+  illustration: Extract<TheoryIllustration, { kind: 'tab' }>;
+  onChange: (patch: Partial<LessonStep>) => void;
+}) {
+  const { t } = useTranslation();
+  const notes = illustration.notes;
+
+  return (
+    <div className="flex flex-col gap-2">
+      <p className="text-muted-foreground text-[11px]">{t('theoryIllustration.tabHint')}</p>
+
+      <div className="flex flex-col gap-1 max-w-[160px]">
+        <label className="text-[10px] text-muted-foreground">{t('moduleForm.stepEditor.fieldBeatsPerMeasure')}</label>
+        <input
+          type="number"
+          min="1"
+          value={illustration.beatsPerMeasure}
+          onChange={(event) => onChange({ illustration: { ...illustration, beatsPerMeasure: Number(event.target.value) } })}
+          className={`${compactInputClass} w-16`}
+        />
+      </div>
+
+      <TabNoteBuilder
+        notes={notes}
+        beatsPerMeasure={illustration.beatsPerMeasure}
+        onNotesChange={(next) => onChange({ illustration: { ...illustration, notes: next } })}
+      />
+
+      <TabNoteRows notes={notes} onNotesChange={(next) => onChange({ illustration: { ...illustration, notes: next } })} />
     </div>
   );
 }
