@@ -59,7 +59,7 @@ export default function TrackAnalyticsPage() {
       </div>
 
       <h1 className="font-serif text-2xl font-bold mb-1">{stats.title}</h1>
-      <p className="text-muted-foreground mb-6">{t('trackAnalytics.title')}</p>
+      <p className="text-muted-foreground mb-6">{t('trackAnalytics.subtitle')}</p>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6">
         <div className="bg-card border border-border/10 rounded-2xl p-4">
